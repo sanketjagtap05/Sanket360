@@ -2,16 +2,13 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
 export default async function HomePage() {
-  const { data: forts } = await supabase
+  const { data: forts, error } = await supabase
     .from("forts")
-    .select("id, name, location, history, photos_url")
-    .order("id", { ascending: true })
-    .limit(6);
+    .select("id, name, location, history")
+    .order("id", { ascending: true });
 
   return (
-    <main className="home">
-
-      {/* NAVBAR */}
+    <main className="page">
       <nav className="navbar">
         <Link href="/" className="logo">
           SANKET<span>360</span>
@@ -24,137 +21,68 @@ export default async function HomePage() {
         </div>
       </nav>
 
-      {/* HERO */}
       <section className="hero">
+        <p className="label">EXPLORE • EXPERIENCE • PRESERVE</p>
 
-        <div className="heroContent">
+        <h1>
+          Maharashtra
+          <br />
+          Forts
+        </h1>
 
-          <p className="eyebrow">
-            EXPLORE • EXPERIENCE • PRESERVE
-          </p>
+        <p className="heroText">
+          महाराष्ट्रातील ऐतिहासिक किल्ले, त्यांचा इतिहास,
+          trekking आणि digital experiences एका ठिकाणी.
+        </p>
 
-          <h1>
-            Discover
-            <br />
-            Maharashtra.
-          </h1>
-
-          <p className="heroText">
-            महाराष्ट्रातील किल्ले, सह्याद्री,
-            इतिहास आणि 360° experiences
-            एका digital platform वर.
-          </p>
-
-          <div className="buttons">
-
-            <Link href="/Forts" className="primaryButton">
-              Explore Forts →
-            </Link>
-
-            <a href="#about" className="secondaryButton">
-              About SANKET360
-            </a>
-
-          </div>
-
-        </div>
-
-        <div className="heroVisual">
-          <div className="circle">
-            🏰
-          </div>
-
-          <p>
-            SAHYADRI
-            <br />
-            MAHARASHTRA
-          </p>
-        </div>
-
+        <Link href="/Forts" className="button">
+          Explore Forts →
+        </Link>
       </section>
 
-      {/* STATS */}
-      <section className="stats">
+      <section className="about">
+        <p className="label">SANKET360</p>
 
-        <div>
-          <strong>{forts?.length || 0}</strong>
-          <span>Forts</span>
-        </div>
+        <h2>सह्याद्रीचा इतिहास Digital स्वरूपात.</h2>
 
-        <div>
-          <strong>360°</strong>
-          <span>Experiences</span>
-        </div>
-
-        <div>
-          <strong>∞</strong>
-          <span>Stories</span>
-        </div>
-
+        <p>
+          SANKET360 द्वारे महाराष्ट्रातील किल्ले, त्यांचा
+          इतिहास आणि digital experiences एका platform वर
+          आणण्याचा प्रयत्न.
+        </p>
       </section>
 
-      {/* FEATURED FORTS */}
       <section className="fortSection">
+        <div className="sectionHeader">
+          <div>
+            <p className="label">FORTS OF MAHARASHTRA</p>
+            <h2>Explore Forts</h2>
+          </div>
 
-        <div className="sectionHeading">
-
-          <p className="sectionLabel">
-            FEATURED
-          </p>
-
-          <h2>
-            Explore the Forts
-          </h2>
-
-          <p>
-            महाराष्ट्रातील ऐतिहासिक किल्ल्यांचा
-            digital journey सुरू करा.
-          </p>
-
+          <Link href="/Forts" className="viewAll">
+            View All →
+          </Link>
         </div>
 
-        <div className="fortGrid">
+        {error ? (
+          <div className="message">
+            Forts load करताना error आला.
+          </div>
+        ) : forts && forts.length > 0 ? (
+          <div className="grid">
+            {forts.map((fort) => (
+              <Link
+                key={fort.id}
+                href={`/Forts/${fort.id}`}
+                className="card"
+              >
+                <div className="icon">🏰</div>
 
-          {forts?.map((fort) => (
-
-            <Link
-              href={`/Forts/${fort.id}`}
-              className="fortCard"
-              key={fort.id}
-            >
-
-              <div className="fortImage">
-
-                {fort.photos_url ? (
-
-                  <img
-                    src={fort.photos_url}
-                    alt={fort.name}
-                  />
-
-                ) : (
-
-                  <div className="placeholder">
-                    🏰
-                  </div>
-
-                )}
-
-                <span>
-                  EXPLORE →
-                </span>
-
-              </div>
-
-              <div className="fortContent">
-
-                <p className="cardLabel">
-                  FORT • MAHARASHTRA
+                <p className="number">
+                  FORT {String(fort.id).padStart(2, "0")}
                 </p>
 
-                <h3>
-                  {fort.name}
-                </h3>
+                <h3>{fort.name}</h3>
 
                 {fort.location && (
                   <p className="location">
@@ -164,140 +92,77 @@ export default async function HomePage() {
 
                 {fort.history && (
                   <p className="history">
-                    {fort.history.length > 100
-                      ? fort.history.slice(0, 100) + "..."
+                    {fort.history.length > 120
+                      ? fort.history.slice(0, 120) + "..."
                       : fort.history}
                   </p>
                 )}
 
-              </div>
-
-            </Link>
-
-          ))}
-
-        </div>
-
-        <div className="allForts">
-
-          <Link href="/Forts">
-            View All Forts →
-          </Link>
-
-        </div>
-
+                <span className="explore">
+                  EXPLORE →
+                </span>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="message">
+            अजून कोणताही किल्ला जोडलेला नाही.
+          </div>
+        )}
       </section>
 
-      {/* 360 EXPERIENCE */}
       <section className="experience">
+        <p className="label">360° EXPERIENCE</p>
 
-        <div>
-
-          <p className="sectionLabel">
-            IMMERSIVE
-          </p>
-
-          <h2>
-            Experience
-            <br />
-            the Forts in 360°
-          </h2>
-
-          <p>
-            तुमच्या Insta360 X3 photographs
-            वापरून महाराष्ट्रातील किल्ल्यांना
-            digital experience मध्ये आणण्याचा
-            प्रयत्न.
-          </p>
-
-          <Link href="/Forts" className="primaryButton">
-            Start Exploring →
-          </Link>
-
-        </div>
-
-        <div className="experienceIcon">
-          🌐
-        </div>
-
-      </section>
-
-      {/* ABOUT */}
-      <section id="about" className="about">
-
-        <p className="sectionLabel">
-          SANKET360
-        </p>
-
-        <h2>
-          Explore.
-          <br />
-          Experience.
-          <br />
-          Preserve.
-        </h2>
+        <h2>Explore. Experience. Preserve.</h2>
 
         <p>
-          SANKET360 हा महाराष्ट्रातील किल्ले,
-          पर्वत आणि सुंदर ठिकाणे digital
-          photography, 360° technology आणि
-          storytelling द्वारे explore करण्याचा
-          प्रयत्न आहे.
+          Insta360 X3 photographs आणि digital information
+          वापरून किल्ल्यांचा immersive experience.
         </p>
 
+        <Link href="/Forts" className="button">
+          Start Exploring →
+        </Link>
       </section>
 
-      {/* FOOTER */}
       <footer>
-
         <div className="footerLogo">
           SANKET<span>360</span>
         </div>
 
-        <p>
-          EXPLORE • EXPERIENCE • PRESERVE
-        </p>
+        <p>EXPLORE • EXPERIENCE • PRESERVE</p>
 
-        <Link href="/Forts">
-          Explore Forts →
-        </Link>
-
-        <small>
-          © 2026 SANKET360
-        </small>
-
+        <p>© 2026 SANKET360</p>
       </footer>
 
       <style>{`
-
         * {
           box-sizing: border-box;
         }
 
-        .home {
+        .page {
           min-height: 100vh;
           background: #080b09;
-          color: #f5f5f2;
+          color: #f5f5f5;
           font-family: Arial, Helvetica, sans-serif;
         }
 
-        /* NAVBAR */
-
         .navbar {
-          height: 76px;
-          padding: 0 7%;
+          min-height: 72px;
+          padding: 18px 7%;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          border-bottom: 1px solid #252c27;
           background: #080b09;
+          border-bottom: 1px solid #29312c;
         }
 
         .logo,
         .footerLogo {
           color: white;
           text-decoration: none;
-          font-size: 25px;
+          font-size: 24px;
           font-weight: 800;
           letter-spacing: 3px;
         }
@@ -309,416 +174,243 @@ export default async function HomePage() {
 
         .navLinks {
           display: flex;
-          gap: 28px;
+          gap: 25px;
         }
 
         .navLinks a {
-          color: #cbd0cc;
+          color: #ccc;
           text-decoration: none;
-          font-size: 14px;
         }
 
         .navLinks a:hover {
           color: #e7a93b;
         }
 
-        /* HERO */
-
         .hero {
-          min-height: 650px;
-          padding: 90px 8%;
+          min-height: 620px;
+          padding: 100px 7%;
           display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 50px;
+          flex-direction: column;
+          justify-content: center;
           background:
             radial-gradient(
-              circle at 75% 40%,
-              rgba(231,169,59,.15),
+              circle at 75% 35%,
+              rgba(231, 169, 59, 0.15),
               transparent 35%
             ),
-            linear-gradient(
-              135deg,
-              #111a14,
-              #080b09 70%
-            );
+            linear-gradient(135deg, #17231c, #080b09);
         }
 
-        .heroContent {
-          max-width: 750px;
-        }
-
-        .eyebrow,
-        .sectionLabel,
-        .cardLabel {
+        .label {
           color: #e7a93b;
-          font-size: 11px;
+          font-size: 12px;
           font-weight: 800;
-          letter-spacing: 4px;
+          letter-spacing: 3px;
         }
 
         .hero h1 {
           margin: 20px 0;
-          font-size: clamp(65px, 10vw, 130px);
-          line-height: .9;
-          letter-spacing: -5px;
+          font-size: clamp(60px, 10vw, 130px);
+          line-height: 0.9;
+          letter-spacing: -4px;
         }
 
         .heroText {
           max-width: 650px;
-          color: #a5aea8;
-          font-size: 19px;
-          line-height: 1.8;
-        }
-
-        .buttons {
-          display: flex;
-          gap: 15px;
-          flex-wrap: wrap;
-          margin-top: 35px;
-        }
-
-        .primaryButton,
-        .secondaryButton {
-          display: inline-block;
-          padding: 15px 22px;
-          border-radius: 5px;
-          text-decoration: none;
-          font-weight: bold;
-        }
-
-        .primaryButton {
-          background: #e7a93b;
-          color: #111;
-        }
-
-        .secondaryButton {
-          border: 1px solid #465048;
-          color: white;
-        }
-
-        .secondaryButton:hover {
-          border-color: #e7a93b;
-          color: #e7a93b;
-        }
-
-        .heroVisual {
-          width: 330px;
-          height: 330px;
-          border: 1px solid #354239;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-direction: column;
-          background:
-            radial-gradient(
-              circle,
-              #26362b,
-              #0b100d 65%
-            );
-        }
-
-        .circle {
-          font-size: 100px;
-        }
-
-        .heroVisual p {
-          color: #7f8982;
-          text-align: center;
-          letter-spacing: 4px;
-          font-size: 10px;
-        }
-
-        /* STATS */
-
-        .stats {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          border-top: 1px solid #303832;
-          border-bottom: 1px solid #303832;
-          background: #101511;
-        }
-
-        .stats div {
-          padding: 35px;
-          text-align: center;
-          border-right: 1px solid #303832;
-        }
-
-        .stats div:last-child {
-          border-right: none;
-        }
-
-        .stats strong {
-          display: block;
-          color: #e7a93b;
-          font-size: 35px;
-        }
-
-        .stats span {
-          color: #858e88;
-          font-size: 12px;
-          letter-spacing: 2px;
-        }
-
-        /* FORTS */
-
-        .fortSection {
-          max-width: 1200px;
-          margin: auto;
-          padding: 110px 7%;
-        }
-
-        .sectionHeading {
-          max-width: 700px;
-        }
-
-        .sectionHeading h2 {
-          font-size: clamp(40px, 6vw, 65px);
-          margin: 15px 0;
-        }
-
-        .sectionHeading > p:last-child {
-          color: #929b95;
-          line-height: 1.8;
-        }
-
-        .fortGrid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 20px;
-          margin-top: 50px;
-        }
-
-        .fortCard {
-          border: 1px solid #303832;
-          background: #101511;
-          color: white;
-          text-decoration: none;
-          transition: .25s ease;
-          overflow: hidden;
-        }
-
-        .fortCard:hover {
-          transform: translateY(-6px);
-          border-color: #e7a93b;
-        }
-
-        .fortImage {
-          height: 230px;
-          position: relative;
-          background: #19221c;
-        }
-
-        .fortImage img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .placeholder {
-          width: 100%;
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 70px;
-        }
-
-        .fortImage > span {
-          position: absolute;
-          right: 15px;
-          bottom: 15px;
-          padding: 8px 12px;
-          background: #e7a93b;
-          color: #111;
-          font-size: 10px;
-          font-weight: bold;
-        }
-
-        .fortContent {
-          padding: 25px;
-        }
-
-        .fortContent h3 {
-          font-size: 30px;
-          margin: 12px 0;
-        }
-
-        .location {
-          color: #b8c0ba;
-          font-size: 14px;
-        }
-
-        .history {
-          color: #858e88;
-          line-height: 1.6;
-          font-size: 14px;
-        }
-
-        .allForts {
-          text-align: center;
-          margin-top: 45px;
-        }
-
-        .allForts a {
-          color: #e7a93b;
-          text-decoration: none;
-          font-weight: bold;
-        }
-
-        /* EXPERIENCE */
-
-        .experience {
-          padding: 100px 10%;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 50px;
-          background: #111a14;
-          border-top: 1px solid #303832;
-          border-bottom: 1px solid #303832;
-        }
-
-        .experience h2 {
-          font-size: clamp(45px, 7vw, 75px);
-          line-height: 1;
-          margin: 15px 0 25px;
-        }
-
-        .experience p {
-          max-width: 600px;
-          color: #929b95;
+          color: #b6beb8;
+          font-size: 18px;
           line-height: 1.8;
           margin-bottom: 30px;
         }
 
-        .experienceIcon {
-          font-size: 130px;
-          width: 300px;
-          height: 300px;
-          border: 1px solid #405044;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: #0b100d;
+        .button {
+          width: fit-content;
+          padding: 14px 22px;
+          background: #e7a93b;
+          color: #111;
+          text-decoration: none;
+          font-weight: 800;
+          border-radius: 7px;
         }
-
-        /* ABOUT */
 
         .about {
-          max-width: 900px;
+          max-width: 1000px;
           margin: auto;
-          padding: 120px 7%;
+          padding: 100px 7%;
         }
 
-        .about h2 {
-          font-size: clamp(50px, 8vw, 90px);
-          line-height: .95;
-          margin: 20px 0 40px;
+        .about h2,
+        .fortSection h2,
+        .experience h2 {
+          margin: 15px 0 25px;
+          font-size: clamp(38px, 6vw, 65px);
+          line-height: 1;
         }
 
         .about > p:last-child {
-          color: #929b95;
+          max-width: 750px;
+          color: #aeb6b0;
           font-size: 18px;
-          line-height: 1.9;
+          line-height: 1.8;
         }
 
-        /* FOOTER */
+        .fortSection {
+          padding: 90px 7%;
+          background: #0d120f;
+        }
+
+        .sectionHeader {
+          max-width: 1200px;
+          margin: auto;
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+        }
+
+        .viewAll {
+          color: #e7a93b;
+          text-decoration: none;
+          font-weight: bold;
+        }
+
+        .grid {
+          max-width: 1200px;
+          margin: 35px auto 0;
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
+        }
+
+        .card {
+          min-height: 300px;
+          padding: 28px;
+          background: #111713;
+          border: 1px solid #303832;
+          color: white;
+          text-decoration: none;
+          display: flex;
+          flex-direction: column;
+          transition: 0.2s;
+        }
+
+        .card:hover {
+          transform: translateY(-5px);
+          border-color: #e7a93b;
+        }
+
+        .icon {
+          font-size: 42px;
+        }
+
+        .number {
+          margin-top: 22px;
+          color: #e7a93b;
+          font-size: 11px;
+          font-weight: bold;
+          letter-spacing: 2px;
+        }
+
+        .card h3 {
+          margin: 8px 0;
+          font-size: 30px;
+        }
+
+        .location {
+          color: #c4cbc6;
+        }
+
+        .history {
+          color: #8f9891;
+          line-height: 1.6;
+        }
+
+        .explore {
+          margin-top: auto;
+          padding-top: 20px;
+          color: #e7a93b;
+          font-size: 12px;
+          font-weight: bold;
+          letter-spacing: 2px;
+        }
+
+        .message {
+          max-width: 1200px;
+          margin: 30px auto;
+          padding: 25px;
+          border: 1px solid #303832;
+          background: #111713;
+          color: #bfc6c1;
+        }
+
+        .experience {
+          padding: 110px 7%;
+          text-align: center;
+          background: #17231c;
+        }
+
+        .experience > p:not(.label) {
+          max-width: 650px;
+          margin: 0 auto 30px;
+          color: #adb6b0;
+          line-height: 1.8;
+        }
 
         footer {
-          padding: 70px 7%;
+          padding: 60px 7%;
           text-align: center;
-          border-top: 1px solid #252c27;
+          border-top: 1px solid #29312c;
+          background: #060806;
         }
 
         footer p {
           color: #777f79;
-          letter-spacing: 3px;
           font-size: 11px;
-          margin: 15px 0 25px;
+          letter-spacing: 2px;
+          margin: 15px 0;
         }
-
-        footer a {
-          color: #e7a93b;
-          text-decoration: none;
-        }
-
-        footer small {
-          display: block;
-          margin-top: 30px;
-          color: #555d57;
-        }
-
-        /* MOBILE */
 
         @media (max-width: 800px) {
+          .grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
 
+        @media (max-width: 600px) {
           .navbar {
-            height: auto;
-            padding: 20px 6%;
             flex-direction: column;
-            gap: 18px;
+            gap: 15px;
+          }
+
+          .navLinks {
+            gap: 15px;
           }
 
           .hero {
-            min-height: auto;
-            padding: 80px 6%;
-            flex-direction: column;
-            align-items: flex-start;
+            min-height: 550px;
+            padding: 70px 6%;
           }
 
           .hero h1 {
             font-size: 65px;
-            letter-spacing: -2px;
           }
 
-          .heroVisual {
-            width: 240px;
-            height: 240px;
-            align-self: center;
-          }
-
-          .circle {
-            font-size: 70px;
-          }
-
-          .stats {
-            grid-template-columns: 1fr;
-          }
-
-          .stats div {
-            border-right: none;
-            border-bottom: 1px solid #303832;
-          }
-
-          .fortSection {
-            padding: 80px 6%;
-          }
-
-          .fortGrid {
-            grid-template-columns: 1fr;
-          }
-
+          .about,
+          .fortSection,
           .experience {
-            padding: 80px 6%;
-            flex-direction: column;
+            padding: 70px 6%;
+          }
+
+          .sectionHeader {
             align-items: flex-start;
+            flex-direction: column;
+            gap: 15px;
           }
 
-          .experienceIcon {
-            width: 220px;
-            height: 220px;
-            font-size: 90px;
-            align-self: center;
+          .grid {
+            grid-template-columns: 1fr;
           }
-
         }
-
       `}</style>
-
     </main>
   );
 }
