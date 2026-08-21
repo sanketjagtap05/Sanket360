@@ -2,21 +2,24 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
 export default async function HomePage() {
-  const { data: forts, error } = await supabase
+  const { data: forts } = await supabase
     .from("forts")
     .select("id, name, location, history")
     .order("id", { ascending: true });
 
   return (
     <main className="page">
-      <nav className="navbar">
-        <div className="logo">
-          SANKET<span>360</span>
-        </div>
 
-        <Link href="/Forts" className="fortsLink">
-          FORTS →
+      <nav className="navbar">
+        <Link href="/" className="logo">
+          SANKET<span>360</span>
         </Link>
+
+        <div className="navLinks">
+          <Link href="/">Home</Link>
+          <Link href="/Forts">Forts</Link>
+          <Link href="/admin">Admin</Link>
+        </div>
       </nav>
 
       <section className="hero">
@@ -44,13 +47,13 @@ export default async function HomePage() {
         <h2>सह्याद्रीचा इतिहास Digital स्वरूपात.</h2>
 
         <p>
-          SANKET360 द्वारे महाराष्ट्रातील किल्ले, त्यांचा
-          इतिहास आणि digital experiences एका platform वर
-          आणण्याचा प्रयत्न.
+          महाराष्ट्रातील ऐतिहासिक किल्ले, त्यांचा इतिहास
+          आणि digital experiences एका platform वर.
         </p>
       </section>
 
       <section className="fortSection">
+
         <div className="sectionHeader">
           <div>
             <p className="label">FORTS OF MAHARASHTRA</p>
@@ -62,57 +65,50 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        {error ? (
-          <div className="message">
-            Forts load करताना error आला.
-          </div>
-        ) : forts && forts.length > 0 ? (
-          <div className="grid">
-            {forts.map((fort) => (
-              <Link
-                key={fort.id}
-                href={`/Forts/${fort.id}`}
-                className="card"
-              >
-                <div className="icon">🏰</div>
+        <div className="grid">
+          {forts?.map((fort) => (
+            <Link
+              key={fort.id}
+              href={`/Forts/${fort.id}`}
+              className="card"
+            >
+              <div className="icon">🏰</div>
 
-                <p className="number">
-                  FORT {String(fort.id).padStart(2, "0")}
+              <p className="number">
+                FORT {String(fort.id).padStart(2, "0")}
+              </p>
+
+              <h3>{fort.name}</h3>
+
+              {fort.location && (
+                <p className="location">
+                  📍 {fort.location}
                 </p>
+              )}
 
-                <h3>{fort.name}</h3>
+              {fort.history && (
+                <p className="history">
+                  {fort.history.length > 120
+                    ? fort.history.slice(0, 120) + "..."
+                    : fort.history}
+                </p>
+              )}
 
-                {fort.location && (
-                  <p className="location">
-                    📍 {fort.location}
-                  </p>
-                )}
+              <span className="explore">
+                EXPLORE →
+              </span>
+            </Link>
+          ))}
+        </div>
 
-                {fort.history && (
-                  <p className="history">
-                    {fort.history.length > 120
-                      ? fort.history.slice(0, 120) + "..."
-                      : fort.history}
-                  </p>
-                )}
-
-                <span className="explore">
-                  EXPLORE →
-                </span>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="message">
-            अजून कोणताही किल्ला जोडलेला नाही.
-          </div>
-        )}
       </section>
 
       <section className="experience">
         <p className="label">360° EXPERIENCE</p>
 
-        <h2>Explore. Experience. Preserve.</h2>
+        <h2>
+          Explore. Experience. Preserve.
+        </h2>
 
         <p>
           Insta360 X3 photographs आणि digital information
@@ -139,6 +135,11 @@ export default async function HomePage() {
           box-sizing: border-box;
         }
 
+        body {
+          margin: 0;
+          background: #080b09;
+        }
+
         .page {
           min-height: 100vh;
           background: #080b09;
@@ -152,7 +153,6 @@ export default async function HomePage() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          background: #080b09;
           border-bottom: 1px solid #29312c;
         }
 
@@ -170,12 +170,18 @@ export default async function HomePage() {
           color: #e7a93b;
         }
 
-        .fortsLink {
-          color: #e7a93b;
+        .navLinks {
+          display: flex;
+          gap: 25px;
+        }
+
+        .navLinks a {
+          color: #ccc;
           text-decoration: none;
-          font-size: 13px;
-          font-weight: 800;
-          letter-spacing: 2px;
+        }
+
+        .navLinks a:hover {
+          color: #e7a93b;
         }
 
         .hero {
@@ -184,10 +190,11 @@ export default async function HomePage() {
           display: flex;
           flex-direction: column;
           justify-content: center;
+
           background:
             radial-gradient(
               circle at 75% 35%,
-              rgba(231, 169, 59, 0.15),
+              rgba(231,169,59,0.16),
               transparent 35%
             ),
             linear-gradient(135deg, #17231c, #080b09);
@@ -226,20 +233,18 @@ export default async function HomePage() {
         }
 
         .about {
-          max-width: 1000px;
+          max-width: 1100px;
           margin: auto;
           padding: 100px 7%;
         }
 
-        .about h2,
-        .fortSection h2,
-        .experience h2 {
+        .about h2 {
           margin: 15px 0 25px;
           font-size: clamp(38px, 6vw, 65px);
           line-height: 1;
         }
 
-        .about > p:last-child {
+        .about p:last-child {
           max-width: 750px;
           color: #aeb6b0;
           font-size: 18px;
@@ -257,6 +262,11 @@ export default async function HomePage() {
           display: flex;
           align-items: flex-end;
           justify-content: space-between;
+        }
+
+        .sectionHeader h2 {
+          margin: 15px 0 0;
+          font-size: clamp(38px, 6vw, 65px);
         }
 
         .viewAll {
@@ -325,22 +335,18 @@ export default async function HomePage() {
           letter-spacing: 2px;
         }
 
-        .message {
-          max-width: 1200px;
-          margin: 30px auto;
-          padding: 25px;
-          border: 1px solid #303832;
-          background: #111713;
-          color: #bfc6c1;
-        }
-
         .experience {
           padding: 110px 7%;
           text-align: center;
           background: #17231c;
         }
 
-        .experience > p:not(.label) {
+        .experience h2 {
+          margin: 15px 0 25px;
+          font-size: clamp(38px, 6vw, 65px);
+        }
+
+        .experience p:not(.label) {
           max-width: 650px;
           margin: 0 auto 30px;
           color: #adb6b0;
@@ -369,7 +375,8 @@ export default async function HomePage() {
 
         @media (max-width: 600px) {
           .navbar {
-            min-height: 65px;
+            flex-direction: column;
+            gap: 15px;
           }
 
           .hero {
@@ -398,6 +405,7 @@ export default async function HomePage() {
           }
         }
       `}</style>
+
     </main>
   );
 }
