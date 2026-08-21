@@ -1,168 +1,291 @@
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import SahyadriMapWrapper from "@/app/components/SahyadriMapWrapper";
 
-export default async function HomePage() {
+export default async function FortsPage() {
   const { data: forts, error } = await supabase
     .from("forts")
-    .select("id, name, location, history")
+    .select(
+      "id, name, location, history, photos_url, photos_360_url, video_url, gpx_url, latitude, longitude"
+    )
     .order("id", { ascending: true });
 
   return (
     <main className="page">
-      <nav className="navbar">
-        <div className="logo">
-          SANKET<span>360</span>
-        </div>
 
-        <Link href="/Forts" className="fortsLink">
-          FORTS →
+      <nav className="navbar">
+        <Link href="/" className="logo">
+          SANKET<span>360</span>
         </Link>
+
+        <div className="navLinks">
+          <Link href="/">Home</Link>
+          <Link href="/Forts">Forts</Link>
+          <Link href="/admin">Admin</Link>
+        </div>
       </nav>
 
       <section className="hero">
-        <p className="label">EXPLORE • EXPERIENCE • PRESERVE</p>
+        <div className="heroGlow" />
 
-        <h1>
-          Maharashtra
-          <br />
-          Forts
-        </h1>
+        <div className="heroContent">
+          <p className="eyebrow">
+            SANKET360 • SAHYADRI FORT EXPLORER
+          </p>
 
-        <p className="heroText">
-          महाराष्ट्रातील ऐतिहासिक किल्ले, त्यांचा इतिहास,
-          trekking आणि digital experiences एका ठिकाणी.
-        </p>
+          <h1>
+            Explore
+            <br />
+            Maharashtra
+            <br />
+            <span>Forts.</span>
+          </h1>
 
-        <Link href="/Forts" className="button">
-          Explore Forts →
-        </Link>
+          <p className="heroText">
+            महाराष्ट्रातील ऐतिहासिक किल्ले, त्यांचा इतिहास,
+            trekking routes आणि immersive digital experiences
+            एका ठिकाणी.
+          </p>
+
+          <div className="heroStats">
+            <div>
+              <strong>{forts?.length || 0}</strong>
+              <span>FORTS</span>
+            </div>
+
+            <div>
+              <strong>360°</strong>
+              <span>EXPERIENCE</span>
+            </div>
+
+            <div>
+              <strong>GPX</strong>
+              <span>TREK ROUTES</span>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section className="about">
-        <p className="label">SANKET360</p>
+      <section className="fortSection" id="forts">
 
-        <h2>सह्याद्रीचा इतिहास Digital स्वरूपात.</h2>
-
-        <p>
-          SANKET360 द्वारे महाराष्ट्रातील किल्ले, त्यांचा
-          इतिहास आणि digital experiences एका platform वर
-          आणण्याचा प्रयत्न.
-        </p>
-      </section>
-
-      <section className="fortSection">
         <div className="sectionHeader">
           <div>
-            <p className="label">FORTS OF MAHARASHTRA</p>
+            <p className="sectionLabel">
+              FORTS OF MAHARASHTRA
+            </p>
+
             <h2>Explore Forts</h2>
+
+            <p className="sectionIntro">
+              Discover the stories, trekking routes and
+              digital experiences hidden across the Sahyadri.
+            </p>
           </div>
 
-          <Link href="/Forts" className="viewAll">
-            View All →
-          </Link>
+          <div className="countBox">
+            <strong>{forts?.length || 0}</strong>
+            <span>FORTS</span>
+          </div>
         </div>
 
         {error ? (
-          <div className="message">
-            Forts load करताना error आला.
+          <div className="message errorMessage">
+            <strong>Forts load करताना error आला.</strong>
+            <p>{error.message}</p>
           </div>
         ) : forts && forts.length > 0 ? (
           <div className="grid">
-            {forts.map((fort) => (
+
+            {forts.map((fort, index) => (
               <Link
                 key={fort.id}
                 href={`/Forts/${fort.id}`}
                 className="card"
               >
-                <div className="icon">🏰</div>
 
-                <p className="number">
-                  FORT {String(fort.id).padStart(2, "0")}
-                </p>
+                <div className="imageBox">
 
-                <h3>{fort.name}</h3>
+                  {fort.photos_url ? (
+                    <img
+                      src={fort.photos_url}
+                      alt={fort.name}
+                    />
+                  ) : (
+                    <div className="imageFallback">
+                      🏰
+                    </div>
+                  )}
 
-                {fort.location && (
-                  <p className="location">
-                    📍 {fort.location}
+                  <div className="imageOverlay" />
+
+                  <div className="fortNumber">
+                    {String(index + 1).padStart(2, "0")}
+                  </div>
+
+                  <div className="openBadge">
+                    EXPLORE →
+                  </div>
+                </div>
+
+                <div className="cardContent">
+
+                  <p className="cardLabel">
+                    SAHYADRI FORT
                   </p>
-                )}
 
-                {fort.history && (
-                  <p className="history">
-                    {fort.history.length > 120
-                      ? fort.history.slice(0, 120) + "..."
-                      : fort.history}
-                  </p>
-                )}
+                  <h3>{fort.name}</h3>
 
-                <span className="explore">
-                  EXPLORE →
-                </span>
+                  {fort.location && (
+                    <p className="location">
+                      📍 {fort.location}
+                    </p>
+                  )}
+
+                  {fort.history && (
+                    <p className="history">
+                      {fort.history.length > 130
+                        ? fort.history.slice(0, 130) + "..."
+                        : fort.history}
+                    </p>
+                  )}
+
+                  <div className="badges">
+
+                    {fort.gpx_url && (
+                      <span className="badge">
+                        🗺️ GPX
+                      </span>
+                    )}
+
+                    {fort.photos_360_url && (
+                      <span className="badge">
+                        🌐 360°
+                      </span>
+                    )}
+
+                    {fort.photos_url && (
+                      <span className="badge">
+                        📷 PHOTOS
+                      </span>
+                    )}
+
+                    {fort.video_url && (
+                      <span className="badge">
+                        🎥 VIDEO
+                      </span>
+                    )}
+
+                  </div>
+
+                  <div className="cardFooter">
+                    <span>VIEW FORT</span>
+                    <span className="arrow">→</span>
+                  </div>
+
+                </div>
+
               </Link>
             ))}
+
           </div>
         ) : (
           <div className="message">
             अजून कोणताही किल्ला जोडलेला नाही.
           </div>
         )}
+
       </section>
 
+      {/* SAHYADRI MAP */}
+      <SahyadriMapWrapper forts={forts || []} />
+
       <section className="experience">
-        <p className="label">360° EXPERIENCE</p>
 
-        <h2>Explore. Experience. Preserve.</h2>
-
-        <p>
-          Insta360 X3 photographs आणि digital information
-          वापरून किल्ल्यांचा immersive experience.
+        <p className="sectionLabel">
+          DIGITAL SAHYADRI
         </p>
 
-        <Link href="/Forts" className="button">
-          Start Exploring →
+        <h2>
+          Explore.
+          <br />
+          Experience.
+          <br />
+          Preserve.
+        </h2>
+
+        <p>
+          इतिहासापासून trekking route पर्यंत आणि
+          360° experiences पासून digital exploration
+          पर्यंत — Sahyadri एका नवीन स्वरूपात.
+        </p>
+
+        <Link
+          href="#forts"
+          className="experienceButton"
+        >
+          START EXPLORING ↓
         </Link>
+
       </section>
 
       <footer>
+
         <div className="footerLogo">
           SANKET<span>360</span>
         </div>
 
-        <p>EXPLORE • EXPERIENCE • PRESERVE</p>
+        <p>
+          EXPLORE • EXPERIENCE • PRESERVE
+        </p>
 
-        <p>© 2026 SANKET360</p>
+        <Link href="/">
+          ← Back to Home
+        </Link>
+
+        <small>
+          © 2026 SANKET360
+        </small>
+
       </footer>
 
       <style>{`
+
         * {
           box-sizing: border-box;
         }
 
+        html {
+          scroll-behavior: smooth;
+        }
+
         .page {
           min-height: 100vh;
-          background: #080b09;
-          color: #f5f5f5;
+          background: #070a08;
+          color: #f4f4f1;
           font-family: Arial, Helvetica, sans-serif;
         }
 
         .navbar {
-          min-height: 72px;
-          padding: 18px 7%;
+          height: 76px;
+          padding: 0 7%;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          background: #080b09;
-          border-bottom: 1px solid #29312c;
+          background: rgba(7,10,8,0.96);
+          border-bottom: 1px solid #252c27;
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          backdrop-filter: blur(12px);
         }
 
         .logo,
         .footerLogo {
           color: white;
-          text-decoration: none;
-          font-size: 24px;
-          font-weight: 800;
+          font-size: 25px;
+          font-weight: 900;
           letter-spacing: 3px;
+          text-decoration: none;
         }
 
         .logo span,
@@ -170,185 +293,368 @@ export default async function HomePage() {
           color: #e7a93b;
         }
 
-        .fortsLink {
-          color: #e7a93b;
+        .navLinks {
+          display: flex;
+          gap: 28px;
+        }
+
+        .navLinks a {
+          color: #c4cbc6;
           text-decoration: none;
           font-size: 13px;
-          font-weight: 800;
-          letter-spacing: 2px;
+          font-weight: 700;
+          letter-spacing: 1px;
+        }
+
+        .navLinks a:hover {
+          color: #e7a93b;
         }
 
         .hero {
-          min-height: 620px;
+          min-height: 650px;
           padding: 100px 7%;
           display: flex;
-          flex-direction: column;
-          justify-content: center;
+          align-items: center;
+          position: relative;
+          overflow: hidden;
           background:
-            radial-gradient(
-              circle at 75% 35%,
-              rgba(231, 169, 59, 0.15),
-              transparent 35%
-            ),
-            linear-gradient(135deg, #17231c, #080b09);
+            linear-gradient(
+              135deg,
+              #142019 0%,
+              #080b09 55%,
+              #101710 100%
+            );
+          border-bottom: 1px solid #252c27;
         }
 
-        .label {
+        .heroGlow {
+          position: absolute;
+          width: 600px;
+          height: 600px;
+          right: -180px;
+          top: -100px;
+          border-radius: 50%;
+          background: rgba(231,169,59,0.12);
+          filter: blur(100px);
+        }
+
+        .heroContent {
+          max-width: 1000px;
+          position: relative;
+          z-index: 2;
+        }
+
+        .eyebrow,
+        .sectionLabel {
           color: #e7a93b;
-          font-size: 12px;
-          font-weight: 800;
-          letter-spacing: 3px;
+          font-size: 11px;
+          font-weight: 900;
+          letter-spacing: 4px;
         }
 
         .hero h1 {
-          margin: 20px 0;
-          font-size: clamp(60px, 10vw, 130px);
-          line-height: 0.9;
-          letter-spacing: -4px;
+          margin: 25px 0;
+          font-size: clamp(65px, 10vw, 135px);
+          line-height: 0.88;
+          letter-spacing: -6px;
+        }
+
+        .hero h1 span {
+          color: #e7a93b;
         }
 
         .heroText {
           max-width: 650px;
-          color: #b6beb8;
-          font-size: 18px;
-          line-height: 1.8;
-          margin-bottom: 30px;
-        }
-
-        .button {
-          width: fit-content;
-          padding: 14px 22px;
-          background: #e7a93b;
-          color: #111;
-          text-decoration: none;
-          font-weight: 800;
-          border-radius: 7px;
-        }
-
-        .about {
-          max-width: 1000px;
-          margin: auto;
-          padding: 100px 7%;
-        }
-
-        .about h2,
-        .fortSection h2,
-        .experience h2 {
-          margin: 15px 0 25px;
-          font-size: clamp(38px, 6vw, 65px);
-          line-height: 1;
-        }
-
-        .about > p:last-child {
-          max-width: 750px;
           color: #aeb6b0;
           font-size: 18px;
           line-height: 1.8;
         }
 
+        .heroStats {
+          margin-top: 45px;
+          display: flex;
+        }
+
+        .heroStats div {
+          min-width: 130px;
+          padding-right: 35px;
+          margin-right: 35px;
+          border-right: 1px solid #384039;
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+        }
+
+        .heroStats div:last-child {
+          border: none;
+        }
+
+        .heroStats strong {
+          font-size: 25px;
+          color: #f0f0ec;
+        }
+
+        .heroStats span {
+          color: #777f79;
+          font-size: 10px;
+          letter-spacing: 2px;
+          font-weight: 800;
+        }
+
         .fortSection {
-          padding: 90px 7%;
-          background: #0d120f;
+          padding: 110px 7%;
+          background: #0b0f0c;
         }
 
         .sectionHeader {
-          max-width: 1200px;
+          max-width: 1250px;
           margin: auto;
           display: flex;
           align-items: flex-end;
           justify-content: space-between;
+          gap: 40px;
         }
 
-        .viewAll {
-          color: #e7a93b;
-          text-decoration: none;
-          font-weight: bold;
+        .sectionHeader h2 {
+          margin: 15px 0;
+          font-size: clamp(42px, 6vw, 70px);
+          line-height: 0.95;
+          letter-spacing: -3px;
         }
 
-        .grid {
-          max-width: 1200px;
-          margin: 35px auto 0;
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 20px;
+        .sectionIntro {
+          max-width: 600px;
+          color: #8f9891;
+          line-height: 1.7;
         }
 
-        .card {
-          min-height: 300px;
-          padding: 28px;
-          background: #111713;
+        .countBox {
           border: 1px solid #303832;
-          color: white;
-          text-decoration: none;
+          background: #101511;
+          padding: 20px 28px;
           display: flex;
           flex-direction: column;
-          transition: 0.2s;
+          min-width: 100px;
         }
 
-        .card:hover {
-          transform: translateY(-5px);
-          border-color: #e7a93b;
-        }
-
-        .icon {
-          font-size: 42px;
-        }
-
-        .number {
-          margin-top: 22px;
+        .countBox strong {
+          font-size: 35px;
           color: #e7a93b;
-          font-size: 11px;
-          font-weight: bold;
+        }
+
+        .countBox span {
+          color: #777f79;
+          font-size: 10px;
           letter-spacing: 2px;
         }
 
+        .grid {
+          max-width: 1250px;
+          margin: 55px auto 0;
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 22px;
+        }
+
+        .card {
+          background: #101511;
+          border: 1px solid #303832;
+          color: white;
+          text-decoration: none;
+          overflow: hidden;
+          transition: 0.3s ease;
+        }
+
+        .card:hover {
+          transform: translateY(-8px);
+          border-color: #e7a93b;
+          box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+        }
+
+        .imageBox {
+          height: 260px;
+          position: relative;
+          overflow: hidden;
+          background: #18201b;
+        }
+
+        .imageBox img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+          transition: transform 0.5s ease;
+        }
+
+        .card:hover .imageBox img {
+          transform: scale(1.06);
+        }
+
+        .imageFallback {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 75px;
+          background: #18201b;
+        }
+
+        .imageOverlay {
+          position: absolute;
+          inset: 0;
+          background:
+            linear-gradient(
+              180deg,
+              rgba(0,0,0,0.05),
+              rgba(0,0,0,0.75)
+            );
+        }
+
+        .fortNumber {
+          position: absolute;
+          top: 18px;
+          left: 18px;
+          width: 42px;
+          height: 42px;
+          border: 1px solid rgba(255,255,255,0.4);
+          background: rgba(0,0,0,0.45);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+          font-weight: 900;
+        }
+
+        .openBadge {
+          position: absolute;
+          bottom: 18px;
+          right: 18px;
+          padding: 9px 12px;
+          background: #e7a93b;
+          color: #111;
+          font-size: 10px;
+          font-weight: 900;
+          letter-spacing: 1px;
+        }
+
+        .cardContent {
+          padding: 25px;
+        }
+
+        .cardLabel {
+          color: #e7a93b;
+          font-size: 9px;
+          font-weight: 900;
+          letter-spacing: 3px;
+        }
+
         .card h3 {
-          margin: 8px 0;
+          margin: 9px 0;
           font-size: 30px;
         }
 
         .location {
-          color: #c4cbc6;
+          color: #c3cac5;
+          font-size: 13px;
+          margin: 10px 0;
         }
 
         .history {
           color: #8f9891;
-          line-height: 1.6;
+          font-size: 14px;
+          line-height: 1.65;
+          min-height: 47px;
         }
 
-        .explore {
-          margin-top: auto;
-          padding-top: 20px;
+        .badges {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 7px;
+          margin-top: 18px;
+        }
+
+        .badge {
+          padding: 6px 8px;
+          border: 1px solid #303832;
+          background: #0b0f0c;
+          color: #aeb6b0;
+          font-size: 9px;
+          font-weight: 800;
+        }
+
+        .cardFooter {
+          margin-top: 25px;
+          padding-top: 18px;
+          border-top: 1px solid #29312c;
+          display: flex;
+          justify-content: space-between;
           color: #e7a93b;
-          font-size: 12px;
-          font-weight: bold;
+          font-size: 10px;
+          font-weight: 900;
           letter-spacing: 2px;
         }
 
+        .arrow {
+          font-size: 20px;
+        }
+
         .message {
-          max-width: 1200px;
-          margin: 30px auto;
+          max-width: 1250px;
+          margin: 40px auto;
           padding: 25px;
           border: 1px solid #303832;
-          background: #111713;
+          background: #101511;
           color: #bfc6c1;
         }
 
-        .experience {
-          padding: 110px 7%;
-          text-align: center;
-          background: #17231c;
+        .errorMessage {
+          border-color: #704545;
         }
 
-        .experience > p:not(.label) {
+        .message p {
+          color: #777f79;
+        }
+
+        .experience {
+          padding: 130px 7%;
+          text-align: center;
+          background:
+            radial-gradient(
+              circle at center,
+              rgba(231,169,59,0.1),
+              transparent 40%
+            ),
+            #142019;
+        }
+
+        .experience h2 {
+          margin: 20px 0 30px;
+          font-size: clamp(50px, 8vw, 100px);
+          line-height: 0.9;
+          letter-spacing: -4px;
+        }
+
+        .experience > p:not(.sectionLabel) {
           max-width: 650px;
-          margin: 0 auto 30px;
-          color: #adb6b0;
+          margin: 0 auto 35px;
+          color: #aeb6b0;
           line-height: 1.8;
         }
 
+        .experienceButton {
+          display: inline-block;
+          padding: 14px 22px;
+          border: 1px solid #e7a93b;
+          color: #e7a93b;
+          text-decoration: none;
+          font-size: 11px;
+          font-weight: 900;
+          letter-spacing: 2px;
+        }
+
         footer {
-          padding: 60px 7%;
+          padding: 65px 7%;
           text-align: center;
           border-top: 1px solid #29312c;
           background: #060806;
@@ -356,48 +662,98 @@ export default async function HomePage() {
 
         footer p {
           color: #777f79;
-          font-size: 11px;
-          letter-spacing: 2px;
-          margin: 15px 0;
+          font-size: 10px;
+          letter-spacing: 3px;
+          margin: 15px 0 25px;
         }
 
-        @media (max-width: 800px) {
+        footer a {
+          color: #e7a93b;
+          text-decoration: none;
+        }
+
+        footer small {
+          display: block;
+          margin-top: 30px;
+          color: #4f5651;
+        }
+
+        @media (max-width: 950px) {
           .grid {
             grid-template-columns: repeat(2, 1fr);
-          }
-        }
-
-        @media (max-width: 600px) {
-          .navbar {
-            min-height: 65px;
-          }
-
-          .hero {
-            min-height: 550px;
-            padding: 70px 6%;
-          }
-
-          .hero h1 {
-            font-size: 65px;
-          }
-
-          .about,
-          .fortSection,
-          .experience {
-            padding: 70px 6%;
           }
 
           .sectionHeader {
             align-items: flex-start;
             flex-direction: column;
-            gap: 15px;
+          }
+        }
+
+        @media (max-width: 600px) {
+          .navbar {
+            height: auto;
+            padding: 18px 6%;
+            flex-direction: column;
+            gap: 16px;
+          }
+
+          .navLinks {
+            gap: 18px;
+          }
+
+          .hero {
+            min-height: 600px;
+            padding: 80px 6%;
+          }
+
+          .hero h1 {
+            font-size: 65px;
+            letter-spacing: -3px;
+          }
+
+          .heroText {
+            font-size: 16px;
+          }
+
+          .heroStats {
+            flex-wrap: wrap;
+            gap: 20px;
+          }
+
+          .heroStats div {
+            min-width: 90px;
+            padding-right: 15px;
+            margin-right: 0;
+          }
+
+          .fortSection {
+            padding: 75px 6%;
           }
 
           .grid {
             grid-template-columns: 1fr;
+            gap: 18px;
+          }
+
+          .imageBox {
+            height: 230px;
+          }
+
+          .card h3 {
+            font-size: 27px;
+          }
+
+          .experience {
+            padding: 90px 6%;
+          }
+
+          .experience h2 {
+            font-size: 55px;
           }
         }
+
       `}</style>
+
     </main>
   );
 }
