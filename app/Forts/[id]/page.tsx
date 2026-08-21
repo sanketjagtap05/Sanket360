@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import GPXMapClient from "@/app/components/GPXMapClient";
 
 export default async function FortDetailPage({
   params,
@@ -123,6 +124,29 @@ export default async function FortDetailPage({
         </section>
       )}
 
+{/* TREKKING ROUTE MAP */}
+{fort.gpx_url && (
+  <section className="section darkSection">
+
+    <p className="sectionLabel">
+      03 • TREKKING ROUTE
+    </p>
+
+    <h2>
+      Trek Route of {fort.name}
+    </h2>
+
+    <p className="description">
+      Explore the actual trekking route directly on the map.
+      Zoom, pan and follow the route without downloading the GPX file.
+    </p>
+
+    <div style={{ marginTop: "40px" }}>
+      <GPXMapClient url={fort.gpx_url} />
+    </div>
+
+  </section>
+)}
       {/* MEDIA */}
       <section className="section">
 
