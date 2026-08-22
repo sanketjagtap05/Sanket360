@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import Weather from "@/components/Weather";
+import HistoricalHighlights from "@/components/HistoricalHighlights";
 
 type Fort = {
   id: number;
@@ -20,40 +23,49 @@ export default function RajgadPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    async function loadRajgad() {
+      const { data, error } = await supabase
+        .from("forts")
+        .select("*")
+        .eq("id", 1)
+        .maybeSingle();
+
+      console.log("RAJGAD:", data);
+      console.log("RAJGAD ERROR:", error);
+
+      if (error || !data) {
+        setLoading(false);
+        return;
+      }
+
+      setFort(data);
+      setLoading(false);
+    }
+
     loadRajgad();
   }, []);
 
-  async function loadRajgad() {
-    const { data, error } = await supabase
-      .from("forts")
-      .select("*")
-      .eq("id", 1)
-      .single();
-
-    if (error) {
-      console.error("Rajgad fetch error:", error);
-      setLoading(false);
-      return;
-    }
-
-    setFort(data);
-    setLoading(false);
-  }
-
   if (loading) {
     return (
-      <main className="loading-page">
-        <h1>Loading Rajgad...</h1>
+      <main className="loading">
+        <div className="loader">🏰</div>
+        <h2>Loading Rajgad...</h2>
 
         <style>{`
-          .loading-page {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #0b0f0d;
-            color: white;
-            font-family: Arial, Helvetica, sans-serif;
+          .loading {
+            min-height:100vh;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            background:#070a08;
+            color:white;
+            font-family:Arial;
+          }
+
+          .loader {
+            font-size:60px;
+            margin-bottom:20px;
           }
         `}</style>
       </main>
@@ -62,259 +74,235 @@ export default function RajgadPage() {
 
   if (!fort) {
     return (
-      <main className="loading-page">
-        <h1>Rajgad information not found.</h1>
+      <main className="loading">
+        <div className="loader">⚠️</div>
+
+        <h2>Rajgad information not found</h2>
+
+        <p>
+          Supabase मधून Rajgad ची माहिती मिळाली नाही.
+        </p>
+
+        <Link href="/Forts" className="back">
+          ← Back to Forts
+        </Link>
 
         <style>{`
-          .loading-page {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #0b0f0d;
-            color: white;
-            font-family: Arial, Helvetica, sans-serif;
+          .loading {
+            min-height:100vh;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            background:#070a08;
+            color:white;
+            font-family:Arial;
+            text-align:center;
+            padding:30px;
+          }
+
+          .loader {
+            font-size:60px;
+          }
+
+          .loading p {
+            color:#999;
+          }
+
+          .back {
+            margin-top:20px;
+            color:#e7a93b;
+            text-decoration:none;
           }
         `}</style>
       </main>
     );
   }
 
+  const heroImage = fort.photos_url;
+
   return (
-    <main className="rajgad-page">
+    <main className="page">
 
       {/* NAVBAR */}
+
       <nav className="navbar">
-        <div className="logo">
+
+        <Link href="/" className="logo">
           SANKET<span>360</span>
+        </Link>
+
+        <div className="nav">
+
+          <Link href="/">
+            HOME
+          </Link>
+
+          <Link href="/Forts">
+            FORTS
+          </Link>
+
+          <a href="#history">
+            HISTORY
+          </a>
+
+          <a href="#gallery">
+            GALLERY
+          </a>
+
+          <a href="#weather">
+            WEATHER
+          </a>
+
         </div>
 
-        <div className="nav-links">
-          <a href="/">Home</a>
-          <a href="/Forts">Forts</a>
-          <a href="/Forts/Rajgad">Rajgad</a>
-          <a href="#gallery">Gallery</a>
-          <a href="#about">About</a>
-        </div>
       </nav>
 
+
       {/* HERO */}
-      <section className="hero">
-        <div className="hero-content">
 
-          <p className="tagline">
-            EXPLORE • EXPERIENCE • PRESERVE
-          </p>
+      <section
+        className="hero"
+        style={
+          heroImage
+            ? {
+                backgroundImage: `
+                  linear-gradient(
+                    90deg,
+                    rgba(3,7,5,.92),
+                    rgba(3,7,5,.55),
+                    rgba(3,7,5,.3)
+                  ),
+                  url("${heroImage}")
+                `,
+              }
+            : undefined
+        }
+      >
 
-          <h1>{fort.name}</h1>
+        <div className="heroContent">
 
-          <h2>राजगड</h2>
+          <div className="eyebrow">
+            SANKET360 • SAHYADRI
+          </div>
+
+          <h1>
+            {fort.name}
+          </h1>
+
+          <h2>
+            राजगड
+          </h2>
 
           <p>
             {fort.location ||
-              "महाराष्ट्राच्या इतिहासातील एक भव्य आणि ऐतिहासिक किल्ला."}
+              "महाराष्ट्राच्या सह्याद्री पर्वतरांगांमधील ऐतिहासिक किल्ला."}
           </p>
 
-          <div className="hero-buttons">
-            <a href="#history" className="btn">
-              Explore Rajgad ↓
+          <div className="buttons">
+
+            <a
+              href="#history"
+              className="primary"
+            >
+              EXPLORE RAJGAD ↓
             </a>
 
             {fort.photos_360_url && (
-              <a href="#360" className="btn secondary">
-                360° Experience
-              </a>
-            )}
-          </div>
-
-        </div>
-      </section>
-
-      {/* QUICK INFO */}
-      <section className="info-section">
-
-        <div className="info-card">
-          <span>🏰</span>
-          <h3>ऐतिहासिक किल्ला</h3>
-          <p>स्वराज्याच्या इतिहासातील महत्त्वाचे स्थान</p>
-        </div>
-
-        <div className="info-card">
-          <span>📍</span>
-          <h3>Location</h3>
-          <p>{fort.location || "Location माहिती उपलब्ध नाही."}</p>
-        </div>
-
-        <div className="info-card">
-          <span>🥾</span>
-          <h3>Trek</h3>
-          <p>ट्रेकिंगसाठी लोकप्रिय गड</p>
-        </div>
-
-        <div className="info-card">
-          <span>🌐</span>
-          <h3>360°</h3>
-          <p>
-            {fort.photos_360_url
-              ? "360° Experience Available"
-              : "360° link लवकरच"}
-          </p>
-        </div>
-
-      </section>
-
-      {/* HISTORY */}
-      <section id="history" className="content-section">
-
-        <p className="section-label">HISTORY</p>
-
-        <h2>राजगडाचा इतिहास</h2>
-
-        <p>
-          {fort.history ||
-            "राजगडाचा इतिहास Admin मधून लवकरच जोडला जाईल."}
-        </p>
-
-        <div className="history-box">
-
-          <h3>राजगड का पाहावा?</h3>
-
-          <ul>
-            <li>स्वराज्याच्या इतिहासाशी जोडलेला गड</li>
-            <li>बालेकिल्ला आणि विविध माच्या</li>
-            <li>सह्याद्रीचे सुंदर विहंगम दृश्य</li>
-            <li>ट्रेकिंगचा रोमांचक अनुभव</li>
-            <li>360° Photography अनुभव</li>
-          </ul>
-
-        </div>
-
-      </section>
-
-      {/* WHAT TO SEE */}
-      <section className="content-section dark-section">
-
-        <p className="section-label">EXPLORE</p>
-
-        <h2>राजगडावर काय काय पाहायचे?</h2>
-
-        <div className="what-see-box">
-          {fort.what_to_see ? (
-            fort.what_to_see.split("\n").map((item, index) => (
-              <div className="what-see-item" key={index}>
-                <span>🏰</span>
-                <p>{item}</p>
-              </div>
-            ))
-          ) : (
-            <p>
-              राजगडावर पाहण्यासारखी माहिती Admin मधून जोडली जाईल.
-            </p>
-          )}
-        </div>
-
-      </section>
-
-      {/* PHOTO GALLERY */}
-      <section id="gallery" className="content-section">
-
-        <p className="section-label">PHOTOGRAPHY</p>
-
-        <h2>Rajgad Photo Gallery</h2>
-
-        <p>
-          राजगडाचे फोटो, 360° photographs आणि videos येथे पाहता येतील.
-        </p>
-
-        <div className="media-grid">
-
-          {/* PHOTOS */}
-          <div className="media-card">
-
-            <div className="media-placeholder">
-              📸
-            </div>
-
-            <h3>Normal Photos</h3>
-
-            <p>
-              राजगडाचे high quality photographs.
-            </p>
-
-            {fort.photos_url ? (
-              <a
-                href={fort.photos_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="media-button"
-              >
-                View Photos →
-              </a>
-            ) : (
-              <span className="coming-soon">
-                Photos link लवकरच
-              </span>
-            )}
-
-          </div>
-
-          {/* 360 */}
-          <div className="media-card">
-
-            <div className="media-placeholder">
-              🌐
-            </div>
-
-            <h3>360° Photos</h3>
-
-            <p>
-              राजगडाचा immersive 360° अनुभव.
-            </p>
-
-            {fort.photos_360_url ? (
               <a
                 href={fort.photos_360_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="media-button"
+                className="secondary"
               >
-                Open 360° →
+                360° EXPERIENCE
               </a>
-            ) : (
-              <span className="coming-soon">
-                360° link लवकरच
-              </span>
             )}
 
           </div>
 
-          {/* VIDEO */}
-          <div className="media-card">
+        </div>
 
-            <div className="media-placeholder">
-              🎥
-            </div>
+        <div className="scroll">
+          SCROLL TO EXPLORE ↓
+        </div>
 
-            <h3>Videos</h3>
+      </section>
 
-            <p>
-              राजगड ट्रेक आणि गडाची माहिती देणारे videos.
+
+      {/* QUICK INFO */}
+
+      <section className="quick">
+
+        <div>
+          <span>01</span>
+          <strong>HISTORY</strong>
+          <p>
+            स्वराज्याच्या इतिहासातील महत्त्वाचा गड
+          </p>
+        </div>
+
+        <div>
+          <span>02</span>
+          <strong>TREK</strong>
+          <p>
+            सह्याद्रीतील लोकप्रिय trekking destination
+          </p>
+        </div>
+
+        <div>
+          <span>03</span>
+          <strong>360°</strong>
+          <p>
+            Immersive digital experience
+          </p>
+        </div>
+
+        <div>
+          <span>04</span>
+          <strong>EXPLORE</strong>
+          <p>
+            इतिहास, निसर्ग आणि साहस
+          </p>
+        </div>
+
+      </section>
+
+
+      {/* HISTORY */}
+
+      <section
+        id="history"
+        className="section"
+      >
+
+        <div className="label">
+          01 / HISTORY
+        </div>
+
+        <h2>
+          राजगडाचा
+          <br />
+          <span>इतिहास.</span>
+        </h2>
+
+        <div className="historyLayout">
+
+          <div className="bigNumber">
+            01
+          </div>
+
+          <div>
+
+            <p className="historyText">
+              {fort.history ||
+                "राजगडाचा इतिहास लवकरच येथे जोडला जाईल."}
             </p>
 
-            {fort.video_url ? (
-              <a
-                href={fort.video_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="media-button"
-              >
-                Watch Videos →
-              </a>
-            ) : (
-              <span className="coming-soon">
-                Video link लवकरच
-              </span>
-            )}
+            <div className="quote">
+              “सह्याद्रीच्या प्रत्येक कड्यावर
+              इतिहासाची एक कथा दडलेली आहे.”
+            </div>
 
           </div>
 
@@ -322,134 +310,346 @@ export default function RajgadPage() {
 
       </section>
 
-      {/* 360 EXPERIENCE */}
-      <section id="360" className="experience-section">
 
-        <p className="section-label">
-          IMMERSIVE EXPERIENCE
-        </p>
+      {/* WHAT TO SEE */}
 
-        <h2>Explore Rajgad in 360°</h2>
+      <section className="dark section">
 
-        <p>
-          राजगडावरील 360° photographs वापरून गडाचा digital experience.
-        </p>
+        <div className="label">
+          02 / EXPLORE
+        </div>
 
-        <div className="experience-box">
+        <h2>
+          गडावर काय
+          <br />
+          <span>पाहाल?</span>
+        </h2>
 
-          <div className="big-icon">
-            🌐
-          </div>
+        <div className="things">
 
-          <h3>Rajgad 360° Experience</h3>
+          {fort.what_to_see ? (
+            fort.what_to_see
+              .split("\n")
+              .filter(Boolean)
+              .map((item, index) => (
+                <div
+                  className="thing"
+                  key={index}
+                >
 
-          <p>
-            तुमचे Insta360 X3 photographs येथे जोडले जातील.
-          </p>
+                  <span>
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
 
-          {fort.photos_360_url ? (
-            <a
-              href={fort.photos_360_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn"
-            >
-              Launch 360° →
-            </a>
+                  <p>
+                    {item}
+                  </p>
+
+                  <b>
+                    →
+                  </b>
+
+                </div>
+              ))
           ) : (
-            <span className="coming-soon">
-              360° Experience लवकरच
-            </span>
+            <>
+              <div className="thing">
+                <span>01</span>
+                <p>बालेकिल्ला</p>
+                <b>→</b>
+              </div>
+
+              <div className="thing">
+                <span>02</span>
+                <p>माच्या आणि तटबंदी</p>
+                <b>→</b>
+              </div>
+
+              <div className="thing">
+                <span>03</span>
+                <p>सह्याद्रीचे विहंगम दृश्य</p>
+                <b>→</b>
+              </div>
+            </>
           )}
 
         </div>
 
       </section>
 
-      {/* GPX */}
-      <section className="content-section">
 
-        <p className="section-label">
-          TREK DATA
-        </p>
+      {/* GALLERY */}
 
-        <h2>Rajgad Trek Route</h2>
+      <section
+        id="gallery"
+        className="section"
+      >
 
-        <p>
-          राजगड ट्रेकचा GPX route आणि trekking information.
-        </p>
+        <div className="label">
+          03 / MEDIA
+        </div>
 
-        <div className="gpx-card">
+        <h2>
+          Experience
+          <br />
+          <span>Rajgad.</span>
+        </h2>
 
-          <div>
-            <span className="gpx-icon">
-              🗺️
-            </span>
+        <div className="mediaGrid">
 
-            <div>
-              <h3>Rajgad GPX Route</h3>
+          {/* PHOTO */}
 
-              <p>
-                Trek route file / map
-              </p>
+          <div className="media">
+
+            {fort.photos_url ? (
+              <img
+                src={fort.photos_url}
+                alt="Rajgad"
+              />
+            ) : (
+              <div className="mediaIcon">
+                📷
+              </div>
+            )}
+
+            <div className="mediaInfo">
+
+              <small>
+                PHOTOGRAPHY
+              </small>
+
+              <h3>
+                Rajgad Photos
+              </h3>
+
+              {fort.photos_url && (
+                <a
+                  href={fort.photos_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  VIEW PHOTOS →
+                </a>
+              )}
+
             </div>
+
           </div>
+
+
+          {/* 360 */}
+
+          <div className="media">
+
+            <div className="mediaIcon">
+              🌐
+            </div>
+
+            <div className="mediaInfo">
+
+              <small>
+                IMMERSIVE
+              </small>
+
+              <h3>
+                360° Experience
+              </h3>
+
+              {fort.photos_360_url ? (
+                <a
+                  href={fort.photos_360_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  LAUNCH 360° →
+                </a>
+              ) : (
+                <p>
+                  Coming soon
+                </p>
+              )}
+
+            </div>
+
+          </div>
+
+
+          {/* VIDEO */}
+
+          <div className="media">
+
+            <div className="mediaIcon">
+              ▶
+            </div>
+
+            <div className="mediaInfo">
+
+              <small>
+                VIDEO
+              </small>
+
+              <h3>
+                Rajgad Videos
+              </h3>
+
+              {fort.video_url ? (
+                <a
+                  href={fort.video_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  WATCH VIDEO →
+                </a>
+              ) : (
+                <p>
+                  Coming soon
+                </p>
+              )}
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* WEATHER */}
+
+      <section
+        id="weather"
+        className="weatherSection"
+      >
+
+        <div className="label">
+          04 / RAJGAD WEATHER
+        </div>
+
+        <h2>
+          Check the
+          <br />
+          <span>Weather.</span>
+        </h2>
+
+        <p className="weatherDescription">
+          राजगड ट्रेकला जाण्यापूर्वी सध्याचे हवामान
+          आणि परिस्थिती तपासा.
+        </p>
+
+        <div className="weatherCard">
+
+          <Weather
+            latitude={18.2315}
+            longitude={73.6825}
+          />
+
+        </div>
+
+      </section>
+
+
+      {/* GPX */}
+
+      <section className="gpxSection">
+
+        <div>
+
+          <div className="label">
+            05 / TREK DATA
+          </div>
+
+          <h2>
+            Trek the
+            <br />
+            <span>Rajgad.</span>
+          </h2>
+
+          <p>
+            Rajgad trekking route साठी GPX file
+            वापरा आणि तुमचा route digitally
+            explore करा.
+          </p>
 
           {fort.gpx_url ? (
             <a
               href={fort.gpx_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="media-button"
+              className="gpxButton"
             >
-              View / Download GPX
+              🗺️ OPEN GPX ROUTE →
             </a>
           ) : (
-            <span className="coming-soon">
-              GPX link लवकरच
-            </span>
+            <p className="muted">
+              GPX route लवकरच उपलब्ध होईल.
+            </p>
           )}
 
         </div>
 
+        <div className="mapBox">
+
+          <div className="mapLines" />
+
+          <div className="mapPin">
+            📍
+          </div>
+
+          <span>
+            RAJGAD
+          </span>
+
+        </div>
+
       </section>
 
-      {/* TREK INFORMATION */}
-      <section className="content-section dark-section">
 
-        <p className="section-label">
-          TREKKING
-        </p>
+      {/* TIPS */}
 
-        <h2>ट्रेकपूर्वी लक्षात ठेवा</h2>
+      <section className="section dark">
 
-        <div className="tips-grid">
+        <div className="label">
+          06 / TREKKING
+        </div>
+
+        <h2>
+          Trek
+          <br />
+          <span>Smart.</span>
+        </h2>
+
+        <div className="tips">
 
           <div>
-            <h3>🥾 योग्य तयारी</h3>
+            <b>01</b>
+            <h3>🥾 Footwear</h3>
             <p>
-              आरामदायी trekking shoes आणि आवश्यक trekking सामान सोबत ठेवा.
+              योग्य trekking shoes वापरा.
             </p>
           </div>
 
           <div>
-            <h3>💧 पाणी</h3>
+            <b>02</b>
+            <h3>💧 Water</h3>
             <p>
-              पुरेसे पाणी आणि आवश्यक food supplies सोबत ठेवा.
+              पुरेसे पाणी सोबत ठेवा.
             </p>
           </div>
 
           <div>
-            <h3>🌦️ हवामान</h3>
+            <b>03</b>
+            <h3>🌦️ Weather</h3>
             <p>
-              ट्रेकपूर्वी हवामानाची माहिती तपासा.
+              ट्रेकपूर्वी हवामान तपासा.
             </p>
           </div>
 
           <div>
-            <h3>♻️ निसर्ग संवर्धन</h3>
+            <b>04</b>
+            <h3>♻️ Nature</h3>
             <p>
-              कचरा गडावर न टाकता परत आणा आणि ऐतिहासिक वास्तूंचे संरक्षण करा.
+              कचरा न टाकता सह्याद्री स्वच्छ ठेवा.
             </p>
           </div>
 
@@ -457,388 +657,876 @@ export default function RajgadPage() {
 
       </section>
 
-      {/* ABOUT */}
-      <section id="about" className="content-section about-section">
 
-        <p className="section-label">
+      {/* CTA */}
+
+      <section className="cta">
+
+        <div className="label">
           SANKET360
-        </p>
+        </div>
 
         <h2>
-          Explore • Experience • Preserve
+          Explore.
+          <br />
+          Experience.
+          <br />
+          Preserve.
         </h2>
 
-        <p>
-          SANKET360 हा महाराष्ट्रातील किल्ले, पर्वत आणि सुंदर ठिकाणे
-          digital photography आणि 360° experience द्वारे explore करण्याचा
-          प्रयत्न आहे.
-        </p>
-
-        <p>
-          इतिहास जतन करा. निसर्ग अनुभवा. सह्याद्रीला जवळून पहा.
-        </p>
+        <Link
+          href="/Forts"
+          className="ctaButton"
+        >
+          EXPLORE MORE FORTS →
+        </Link>
 
       </section>
 
+
       {/* FOOTER */}
+
       <footer>
 
-        <strong>SANKET360</strong>
+        <div className="footerLogo">
+          SANKET<span>360</span>
+        </div>
 
         <p>
-          Explore • Experience • Preserve
+          EXPLORE • EXPERIENCE • PRESERVE
         </p>
 
-        <p>
+        <Link href="/Forts">
+          ← BACK TO FORTS
+        </Link>
+
+        <small>
           © 2026 SANKET360
-        </p>
+        </small>
 
       </footer>
 
-      {/* PAGE STYLE */}
+
       <style>{`
 
-        .rajgad-page {
-          background: #0b0f0d;
-          color: #f5f5f5;
-          min-height: 100vh;
-          font-family: Arial, Helvetica, sans-serif;
+        * {
+          box-sizing:border-box;
+        }
+
+        html {
+          scroll-behavior:smooth;
+        }
+
+        body {
+          margin:0;
+        }
+
+        .page {
+          background:#070a08;
+          color:#f5f5f2;
+          font-family:Arial, Helvetica, sans-serif;
         }
 
         .navbar {
-          position: sticky;
-          top: 0;
-          z-index: 20;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 18px 7%;
-          background: rgba(8, 12, 10, 0.95);
-          border-bottom: 1px solid #26302a;
+          position:sticky;
+          top:0;
+          z-index:100;
+
+          min-height:76px;
+
+          padding:0 7%;
+
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+
+          background:rgba(7,10,8,.94);
+
+          border-bottom:1px solid #252c27;
+
+          backdrop-filter:blur(15px);
         }
 
-        .logo {
-          font-size: 24px;
-          font-weight: 800;
-          letter-spacing: 2px;
+        .logo,
+        .footerLogo {
+          color:white;
+          text-decoration:none;
+
+          font-size:25px;
+          font-weight:900;
+
+          letter-spacing:3px;
         }
 
-        .logo span {
-          color: #e7a93b;
+        .logo span,
+        .footerLogo span {
+          color:#e7a93b;
         }
 
-        .nav-links {
-          display: flex;
-          gap: 25px;
-          flex-wrap: wrap;
+        .nav {
+          display:flex;
+          gap:28px;
         }
 
-        .nav-links a {
-          color: #ddd;
-          text-decoration: none;
+        .nav a {
+          color:#aaa;
+          text-decoration:none;
+
+          font-size:11px;
+          font-weight:800;
+
+          letter-spacing:2px;
+
+          transition:.2s;
         }
 
-        .nav-links a:hover {
-          color: #e7a93b;
+        .nav a:hover {
+          color:#e7a93b;
         }
 
         .hero {
-          min-height: 75vh;
-          display: flex;
-          align-items: center;
-          padding: 80px 8%;
-          background:
-            linear-gradient(rgba(5,10,7,.45), rgba(5,10,7,.9)),
-            linear-gradient(135deg, #20352a, #111815 60%, #332617);
+
+          min-height:calc(100vh - 76px);
+
+          padding:100px 8%;
+
+          display:flex;
+          align-items:center;
+
+          position:relative;
+
+          background-color:#111;
+
+          background-size:cover;
+          background-position:center;
+
+          border-bottom:1px solid #252c27;
         }
 
-        .hero-content {
-          max-width: 800px;
+        .heroContent {
+          max-width:900px;
         }
 
-        .tagline,
-        .section-label {
-          color: #e7a93b;
-          font-size: 13px;
-          letter-spacing: 3px;
-          font-weight: bold;
+        .eyebrow,
+        .label {
+          color:#e7a93b;
+
+          font-size:11px;
+          font-weight:900;
+
+          letter-spacing:4px;
         }
 
         .hero h1 {
-          font-size: clamp(60px, 10vw, 120px);
-          margin: 10px 0 0;
-          line-height: .9;
+
+          margin:20px 0 0;
+
+          font-size:clamp(75px,12vw,155px);
+
+          line-height:.82;
+
+          letter-spacing:-8px;
         }
 
         .hero h2 {
-          font-size: 30px;
-          margin: 20px 0;
+
+          margin:20px 0;
+
+          font-size:32px;
+
+          font-weight:400;
         }
 
         .hero p {
-          font-size: 19px;
-          line-height: 1.7;
-          color: #d5d5d5;
-          max-width: 700px;
+
+          max-width:650px;
+
+          color:#c2c7c3;
+
+          font-size:18px;
+
+          line-height:1.8;
         }
 
-        .hero-buttons {
-          display: flex;
-          gap: 15px;
-          margin-top: 30px;
-          flex-wrap: wrap;
+        .buttons {
+
+          display:flex;
+          gap:12px;
+
+          margin-top:35px;
+
+          flex-wrap:wrap;
         }
 
-        .btn,
-        .media-button {
-          display: inline-block;
-          padding: 13px 22px;
-          border-radius: 8px;
-          background: #e7a93b;
-          color: #111;
-          text-decoration: none;
-          font-weight: bold;
+        .primary,
+        .secondary,
+        .gpxButton,
+        .ctaButton {
+
+          display:inline-block;
+
+          padding:15px 22px;
+
+          text-decoration:none;
+
+          font-size:11px;
+
+          font-weight:900;
+
+          letter-spacing:2px;
+
+          transition:.25s;
         }
 
-        .btn.secondary {
-          background: transparent;
-          color: white;
-          border: 1px solid #777;
+        .primary {
+          background:#e7a93b;
+          color:#111;
         }
 
-        .info-section {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 15px;
-          padding: 50px 7%;
-          background: #121815;
+        .secondary {
+          color:white;
+          border:1px solid #777;
         }
 
-        .info-card,
-        .place-card,
-        .media-card,
-        .tips-grid > div,
-        .history-box,
-        .gpx-card {
-          border: 1px solid #29342e;
-          background: #151c18;
-          border-radius: 14px;
-          padding: 25px;
+        .primary:hover {
+          transform:translateY(-3px);
         }
 
-        .info-card span {
-          font-size: 30px;
+        .secondary:hover {
+          border-color:#e7a93b;
+          color:#e7a93b;
         }
 
-        .content-section,
-        .experience-section {
-          padding: 80px 8%;
+        .scroll {
+
+          position:absolute;
+
+          right:7%;
+          bottom:35px;
+
+          color:#777;
+
+          font-size:9px;
+
+          letter-spacing:3px;
         }
 
-        .content-section h2,
-        .experience-section h2 {
-          font-size: clamp(32px, 5vw, 55px);
-          margin: 10px 0 25px;
+        .quick {
+
+          display:grid;
+
+          grid-template-columns:repeat(4,1fr);
+
+          background:#101511;
+
+          border-bottom:1px solid #29312c;
         }
 
-        .content-section > p,
-        .experience-section > p {
-          max-width: 800px;
-          color: #c8c8c8;
-          line-height: 1.8;
-          font-size: 17px;
+        .quick > div {
+
+          padding:35px;
+
+          border-right:1px solid #29312c;
         }
 
-        .history-box {
-          margin-top: 30px;
+        .quick > div:last-child {
+          border-right:none;
         }
 
-        .history-box li {
-          margin: 12px 0;
+        .quick span {
+
+          display:block;
+
+          color:#e7a93b;
+
+          font-size:10px;
+
+          margin-bottom:20px;
         }
 
-        .dark-section {
-          background: #101512;
+        .quick strong {
+
+          display:block;
+
+          font-size:15px;
+
+          letter-spacing:2px;
         }
 
-        .what-see-box {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 18px;
-          margin-top: 35px;
+        .quick p {
+
+          color:#777f79;
+
+          font-size:13px;
+
+          line-height:1.5;
         }
 
-        .what-see-item {
-          display: flex;
-          gap: 15px;
-          align-items: flex-start;
-          border: 1px solid #29342e;
-          background: #151c18;
-          border-radius: 14px;
-          padding: 20px;
+        .section,
+        .weatherSection {
+
+          padding:120px 8%;
         }
 
-        .what-see-item span {
-          font-size: 25px;
+        .section h2,
+        .weatherSection h2,
+        .gpxSection h2,
+        .cta h2 {
+
+          margin:20px 0 50px;
+
+          font-size:clamp(55px,8vw,105px);
+
+          line-height:.88;
+
+          letter-spacing:-5px;
         }
 
-        .what-see-item p {
-          margin: 0;
-          color: #ddd;
-          line-height: 1.6;
-          white-space: pre-wrap;
+        .section h2 span,
+        .weatherSection h2 span,
+        .gpxSection h2 span {
+          color:#e7a93b;
         }
 
-        .media-grid,
-        .tips-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 20px;
-          margin-top: 35px;
+        .historyLayout {
+
+          max-width:1000px;
+
+          display:grid;
+
+          grid-template-columns:180px 1fr;
+
+          gap:50px;
         }
 
-        .tips-grid {
-          grid-template-columns: repeat(4, 1fr);
+        .bigNumber {
+
+          font-size:130px;
+
+          color:#1c241f;
+
+          font-weight:900;
+
+          line-height:1;
         }
 
-        .media-placeholder {
-          height: 180px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: #222b25;
-          border-radius: 10px;
-          font-size: 55px;
-          margin-bottom: 20px;
+        .historyText {
+
+          color:#b8beb9;
+
+          font-size:19px;
+
+          line-height:1.9;
         }
 
-        .media-card p,
-        .tips-grid p,
-        .gpx-card p {
-          color: #bbb;
-          line-height: 1.6;
+        .quote {
+
+          margin-top:35px;
+
+          padding:25px;
+
+          border-left:2px solid #e7a93b;
+
+          color:#e7a93b;
+
+          font-size:16px;
+
+          line-height:1.7;
         }
 
-        .media-button {
-          margin-top: 10px;
-          padding: 10px 16px;
-          font-size: 14px;
+        .dark {
+
+          background:#0d120f;
+
+          border-top:1px solid #1f2822;
+          border-bottom:1px solid #1f2822;
         }
 
-        .coming-soon {
-          display: inline-block;
-          margin-top: 10px;
-          color: #999;
-          font-size: 14px;
+        .things {
+          max-width:1100px;
         }
 
-        .experience-section {
-          text-align: center;
-          background: #18251e;
+        .thing {
+
+          display:grid;
+
+          grid-template-columns:80px 1fr 30px;
+
+          align-items:center;
+
+          padding:28px 0;
+
+          border-bottom:1px solid #29312c;
         }
 
-        .experience-section > p {
-          margin-left: auto;
-          margin-right: auto;
+        .thing span {
+          color:#e7a93b;
+          font-size:11px;
         }
 
-        .experience-box {
-          max-width: 700px;
-          margin: 40px auto 0;
-          padding: 60px 30px;
-          border: 1px solid #405346;
-          border-radius: 18px;
-          background: #0d1410;
+        .thing p {
+          margin:0;
+          font-size:22px;
         }
 
-        .big-icon {
-          font-size: 70px;
+        .thing b {
+          color:#e7a93b;
+          font-size:22px;
         }
 
-        .experience-box h3 {
-          font-size: 30px;
+        .mediaGrid {
+
+          display:grid;
+
+          grid-template-columns:repeat(3,1fr);
+
+          gap:20px;
         }
 
-        .gpx-card {
-          margin-top: 30px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 20px;
+        .media {
+
+          min-height:380px;
+
+          position:relative;
+
+          overflow:hidden;
+
+          border:1px solid #303832;
+
+          background:#111712;
         }
 
-        .gpx-card > div {
-          display: flex;
-          align-items: center;
-          gap: 18px;
+        .media img {
+
+          width:100%;
+          height:100%;
+
+          min-height:380px;
+
+          object-fit:cover;
+
+          opacity:.65;
         }
 
-        .gpx-icon {
-          font-size: 40px;
+        .mediaIcon {
+
+          height:250px;
+
+          display:flex;
+
+          align-items:center;
+
+          justify-content:center;
+
+          font-size:75px;
+
+          background:#18201b;
         }
 
-        .about-section {
-          text-align: center;
+        .mediaInfo {
+
+          position:absolute;
+
+          left:25px;
+          right:25px;
+          bottom:25px;
         }
 
-        .about-section > p {
-          margin-left: auto;
-          margin-right: auto;
+        .mediaInfo small {
+
+          color:#e7a93b;
+
+          font-size:9px;
+
+          letter-spacing:3px;
         }
+
+        .mediaInfo h3 {
+
+          font-size:25px;
+
+          margin:8px 0 15px;
+        }
+
+        .mediaInfo a {
+
+          color:#e7a93b;
+
+          text-decoration:none;
+
+          font-size:10px;
+
+          font-weight:900;
+
+          letter-spacing:2px;
+        }
+
+        .mediaInfo p {
+          color:#888;
+        }
+
+
+        /* WEATHER */
+
+        .weatherSection {
+          background:#101611;
+
+          border-top:1px solid #29332d;
+          border-bottom:1px solid #29332d;
+        }
+
+        .weatherDescription {
+
+          max-width:650px;
+
+          margin:-20px 0 35px;
+
+          color:#aeb6b0;
+
+          font-size:16px;
+
+          line-height:1.8;
+        }
+
+        .weatherCard {
+
+          max-width:1100px;
+
+          margin:0 auto;
+
+          padding:0;
+
+          border:1px solid #303832;
+
+          background:#0b100d;
+
+          overflow:hidden;
+        }
+
+
+        /* GPX */
+
+        .gpxSection {
+
+          padding:120px 8%;
+
+          display:grid;
+
+          grid-template-columns:1fr 1fr;
+
+          gap:80px;
+
+          background:#172219;
+        }
+
+        .gpxSection p {
+
+          max-width:600px;
+
+          color:#aeb6b0;
+
+          line-height:1.8;
+        }
+
+        .gpxButton {
+
+          margin-top:20px;
+
+          background:#e7a93b;
+
+          color:#111;
+        }
+
+        .muted {
+          color:#777 !important;
+        }
+
+        .mapBox {
+
+          min-height:400px;
+
+          position:relative;
+
+          overflow:hidden;
+
+          border:1px solid #39483d;
+
+          background:
+            radial-gradient(
+              circle at 50% 50%,
+              rgba(231,169,59,.12),
+              transparent 35%
+            ),
+            #0d1410;
+        }
+
+        .mapLines {
+
+          position:absolute;
+          inset:0;
+
+          opacity:.25;
+
+          background-image:
+            linear-gradient(#59655c 1px,transparent 1px),
+            linear-gradient(90deg,#59655c 1px,transparent 1px);
+
+          background-size:50px 50px;
+        }
+
+        .mapPin {
+
+          position:absolute;
+
+          left:50%;
+          top:48%;
+
+          transform:translate(-50%,-50%);
+
+          font-size:55px;
+        }
+
+        .mapBox > span {
+
+          position:absolute;
+
+          bottom:25px;
+          left:25px;
+
+          color:#e7a93b;
+
+          font-size:10px;
+
+          font-weight:900;
+
+          letter-spacing:4px;
+        }
+
+
+        /* TIPS */
+
+        .tips {
+
+          display:grid;
+
+          grid-template-columns:repeat(4,1fr);
+
+          gap:20px;
+        }
+
+        .tips > div {
+
+          padding:30px;
+
+          border:1px solid #29342e;
+
+          background:#131a16;
+        }
+
+        .tips b {
+
+          color:#e7a93b;
+
+          font-size:11px;
+        }
+
+        .tips h3 {
+          margin-top:25px;
+        }
+
+        .tips p {
+
+          color:#888f8a;
+
+          line-height:1.6;
+
+          font-size:14px;
+        }
+
+
+        /* CTA */
+
+        .cta {
+
+          padding:150px 8%;
+
+          text-align:center;
+
+          background:
+            radial-gradient(
+              circle,
+              rgba(231,169,59,.12),
+              transparent 45%
+            ),
+            #111812;
+        }
+
+        .cta h2 {
+          margin-bottom:45px;
+        }
+
+        .ctaButton {
+
+          border:1px solid #e7a93b;
+
+          color:#e7a93b;
+        }
+
+
+        /* FOOTER */
 
         footer {
-          text-align: center;
-          padding: 50px 20px;
-          background: #080b09;
-          border-top: 1px solid #26302a;
-        }
 
-        footer strong {
-          font-size: 24px;
+          padding:70px 7%;
+
+          text-align:center;
+
+          background:#060806;
+
+          border-top:1px solid #29312c;
         }
 
         footer p {
-          color: #999;
+
+          color:#777;
+
+          font-size:10px;
+
+          letter-spacing:3px;
+
+          margin:18px 0 25px;
         }
 
-        @media (max-width: 900px) {
+        footer a {
 
-          .info-section,
-          .media-grid,
-          .tips-grid {
-            grid-template-columns: repeat(2, 1fr);
+          color:#e7a93b;
+
+          text-decoration:none;
+
+          font-size:11px;
+        }
+
+        footer small {
+
+          display:block;
+
+          margin-top:30px;
+
+          color:#444;
+        }
+
+
+        /* TABLET */
+
+        @media(max-width:900px) {
+
+          .quick {
+            grid-template-columns:repeat(2,1fr);
           }
 
-          .what-see-box {
-            grid-template-columns: 1fr;
+          .mediaGrid {
+            grid-template-columns:1fr;
+          }
+
+          .tips {
+            grid-template-columns:repeat(2,1fr);
+          }
+
+          .gpxSection {
+            grid-template-columns:1fr;
           }
 
         }
 
-        @media (max-width: 600px) {
+
+        /* MOBILE */
+
+        @media(max-width:600px) {
 
           .navbar {
-            flex-direction: column;
-            gap: 15px;
+            height:auto;
+
+            padding:18px 6%;
+
+            flex-direction:column;
+
+            gap:15px;
           }
 
-          .nav-links {
-            justify-content: center;
-          }
+          .nav {
+            gap:15px;
 
-          .info-section,
-          .media-grid,
-          .tips-grid {
-            grid-template-columns: 1fr;
-          }
+            flex-wrap:wrap;
 
-          .gpx-card {
-            flex-direction: column;
-            align-items: flex-start;
+            justify-content:center;
           }
 
           .hero {
-            min-height: 65vh;
+            min-height:650px;
+
+            padding:80px 6%;
+          }
+
+          .hero h1 {
+
+            font-size:70px;
+
+            letter-spacing:-4px;
+          }
+
+          .quick {
+            grid-template-columns:1fr;
+          }
+
+          .quick > div {
+
+            border-right:none;
+
+            border-bottom:1px solid #29312c;
+          }
+
+          .section,
+          .weatherSection,
+          .gpxSection {
+
+            padding:80px 6%;
+          }
+
+          .section h2,
+          .weatherSection h2,
+          .gpxSection h2,
+          .cta h2 {
+
+            font-size:60px;
+
+            letter-spacing:-3px;
+          }
+
+          .historyLayout {
+
+            grid-template-columns:1fr;
+
+            gap:10px;
+          }
+
+          .bigNumber {
+            font-size:70px;
+          }
+
+          .tips {
+            grid-template-columns:1fr;
+          }
+
+          .cta {
+            padding:100px 6%;
+          }
+
+          .scroll {
+            display:none;
+          }
+
+          .weatherCard {
+            width:100%;
           }
 
         }

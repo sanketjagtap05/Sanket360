@@ -6,8 +6,11 @@ import {
   TileLayer,
   Marker,
   Popup,
+  Polyline,
+  LayersControl,
 } from "react-leaflet";
 import L from "leaflet";
+import { useEffect, useState } from "react";
 import "leaflet/dist/leaflet.css";
 
 type Fort = {
@@ -16,17 +19,18 @@ type Fort = {
   location: string | null;
   latitude: number | null;
   longitude: number | null;
+  gpx_url?: string | null;
 };
+
+type RoutePoint = [number, number];
 
 const fortIcon = L.divIcon({
   className: "customFortMarker",
-
   html: `
     <div class="markerPin">
       <span>🏰</span>
     </div>
   `,
-
   iconSize: [42, 42],
   iconAnchor: [21, 42],
   popupAnchor: [0, -42],
@@ -37,6 +41,9 @@ export default function SahyadriMapClient({
 }: {
   forts: Fort[];
 }) {
+  const [route, setRoute] = useState<RoutePoint[]>([]);
+  const [routeName, setRouteName] = useState("");
+
   const validForts = forts.filter(
     (fort) =>
       typeof fort.latitude === "number" &&
@@ -45,15 +52,84 @@ export default function SahyadriMapClient({
       Number.isFinite(fort.longitude)
   );
 
+  useEffect(() => {
+    const rajgad = forts.find(
+      (fort) =>
+        fort.id === 1 &&
+        fort.gpx_url
+    );
+
+    if (!rajgad?.gpx_url) return;
+
+    async function loadGPX() {
+      try {
+        const response = await fetch(
+          rajgad!.gpx_url!
+        );
+
+        if (!response.ok) {
+          throw new Error("GPX file could not be loaded");
+        }
+
+        const xmlText = await response.text();
+
+        const parser = new DOMParser();
+
+        const xml = parser.parseFromString(
+          xmlText,
+          "application/xml"
+        );
+
+        const trackPoints =
+          Array.from(
+            xml.querySelectorAll("trkpt")
+          );
+
+        const routePoints: RoutePoint[] =
+          trackPoints
+            .map((point) => {
+              const lat = Number(
+                point.getAttribute("lat")
+              );
+
+              const lon = Number(
+                point.getAttribute("lon")
+              );
+
+              return [lat, lon] as RoutePoint;
+            })
+            .filter(
+              ([lat, lon]) =>
+                Number.isFinite(lat) &&
+                Number.isFinite(lon)
+            );
+
+        if (routePoints.length > 0) {
+          setRoute(routePoints);
+          setRouteName(rajgad.name);
+          console.log(
+            "GPX ROUTE LOADED:",
+            routePoints.length,
+            "points"
+          );
+        }
+      } catch (error) {
+        console.error(
+          "GPX LOAD ERROR:",
+          error
+        );
+      }
+    }
+
+    loadGPX();
+  }, [forts]);
+
   return (
     <section className="mapSection">
-
-      {/* HEADER */}
 
       <div className="mapHeader">
 
         <div>
-
           <p className="mapLabel">
             05 • SAHYADRI INTERACTIVE MAP
           </p>
@@ -65,15 +141,13 @@ export default function SahyadriMapClient({
           </h2>
 
           <p className="mapDescription">
-            महाराष्ट्रातील ऐतिहासिक किल्ले नकाशावर
-            explore करा. Marker वर click करून
-            प्रत्येक किल्ल्याची माहिती पहा.
+            महाराष्ट्रातील ऐतिहासिक किल्ले,
+            trekking routes आणि GPX tracks
+            नकाशावर explore करा.
           </p>
-
         </div>
 
         <div className="fortCount">
-
           <strong>
             {validForts.length}
           </strong>
@@ -81,13 +155,9 @@ export default function SahyadriMapClient({
           <span>
             FORTS MAPPED
           </span>
-
         </div>
 
       </div>
-
-
-      {/* MAP */}
 
       <div className="mapWrapper">
 
@@ -98,10 +168,46 @@ export default function SahyadriMapClient({
           className="sahyadriMap"
         >
 
-          <TileLayer
-            attribution="&copy; OpenStreetMap contributors"
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+          <LayersControl position="topright">
+
+            {/* STREET */}
+
+            <LayersControl.BaseLayer
+              checked
+              name="🗺️ Street"
+            >
+              <TileLayer
+                attribution="&copy; OpenStreetMap contributors"
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+            </LayersControl.BaseLayer>
+
+            {/* SATELLITE */}
+
+            <LayersControl.BaseLayer
+              name="🛰️ Satellite"
+            >
+              <TileLayer
+                attribution="Tiles &copy; Esri"
+                url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+              />
+            </LayersControl.BaseLayer>
+
+            {/* TERRAIN */}
+
+            <LayersControl.BaseLayer
+              name="🏔️ Terrain"
+            >
+              <TileLayer
+                attribution="&copy; OpenTopoMap"
+                url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
+              />
+            </LayersControl.BaseLayer>
+
+          </LayersControl>
+
+
+          {/* FORT MARKERS */}
 
           {validForts.map((fort) => (
 
@@ -136,6 +242,12 @@ export default function SahyadriMapClient({
                     </p>
                   )}
 
+                  {fort.gpx_url && (
+                    <p className="gpxAvailable">
+                      🗺️ GPX ROUTE AVAILABLE
+                    </p>
+                  )}
+
                   <Link
                     href={`/Forts/${fort.id}`}
                     className="popupButton"
@@ -151,6 +263,20 @@ export default function SahyadriMapClient({
 
           ))}
 
+
+          {/* GPX ROUTE */}
+
+          {route.length > 1 && (
+            <Polyline
+              positions={route}
+              pathOptions={{
+                color: "#e7a93b",
+                weight: 5,
+                opacity: 0.9,
+              }}
+            />
+          )}
+
         </MapContainer>
 
 
@@ -158,36 +284,54 @@ export default function SahyadriMapClient({
 
         <div className="mapInfo">
 
-          <span>
-            🏰
-          </span>
+          <span>🏰</span>
 
           <strong>
             {validForts.length} Forts
           </strong>
 
           <small>
-            Click a marker to explore
+            Click marker to explore
           </small>
 
         </div>
 
+
+        {/* GPX STATUS */}
+
+        {route.length > 1 && (
+          <div className="gpxStatus">
+
+            <span className="routeDot" />
+
+            <div>
+              <strong>
+                {routeName} Trek Route
+              </strong>
+
+              <small>
+                GPX • {route.length} route points
+              </small>
+            </div>
+
+          </div>
+        )}
+
       </div>
 
-
-      {/* MAP NOTE */}
 
       <div className="mapBottom">
 
         <div>
           <span className="dot" />
+
           <span>
             LIVE FORT LOCATIONS
           </span>
         </div>
 
         <p>
-          Marker वर click करा आणि Fort Detail page उघडा.
+          🛰️ Satellite • 🗺️ Street • 🏔️ Terrain
         </p>
 
       </div>
@@ -201,9 +345,6 @@ export default function SahyadriMapClient({
           background: #080b09;
           color: #f4f4f1;
         }
-
-
-        /* HEADER */
 
         .mapHeader {
           max-width: 1250px;
@@ -257,9 +398,6 @@ export default function SahyadriMapClient({
           line-height: 1.8;
         }
 
-
-        /* COUNT */
-
         .fortCount {
           min-width: 150px;
 
@@ -294,9 +432,6 @@ export default function SahyadriMapClient({
           letter-spacing: 2px;
         }
 
-
-        /* MAP */
-
         .mapWrapper {
           max-width: 1250px;
 
@@ -317,9 +452,6 @@ export default function SahyadriMapClient({
           width: 100%;
           height: 600px;
         }
-
-
-        /* MAP INFO */
 
         .mapInfo {
           position: absolute;
@@ -363,8 +495,62 @@ export default function SahyadriMapClient({
           font-size: 11px;
         }
 
+        .gpxStatus {
+          position: absolute;
 
-        /* MARKER */
+          z-index: 1000;
+
+          right: 20px;
+          bottom: 20px;
+
+          padding: 13px 17px;
+
+          display: flex;
+
+          align-items: center;
+
+          gap: 10px;
+
+          background: rgba(
+            8,
+            11,
+            9,
+            0.95
+          );
+
+          border: 1px solid #e7a93b;
+        }
+
+        .gpxStatus strong {
+          display: block;
+
+          color: #e7a93b;
+
+          font-size: 12px;
+        }
+
+        .gpxStatus small {
+          display: block;
+
+          margin-top: 3px;
+
+          color: #999;
+
+          font-size: 10px;
+        }
+
+        .routeDot {
+          width: 9px;
+          height: 9px;
+
+          border-radius: 50%;
+
+          background: #e7a93b;
+
+          box-shadow:
+            0 0 12px
+            rgba(231,169,59,.8);
+        }
 
         .customFortMarker {
           background: transparent;
@@ -378,8 +564,7 @@ export default function SahyadriMapClient({
           border-radius:
             50% 50% 50% 0;
 
-          transform:
-            rotate(-45deg);
+          transform: rotate(-45deg);
 
           background: #e7a93b;
 
@@ -398,14 +583,10 @@ export default function SahyadriMapClient({
         .markerPin span {
           display: block;
 
-          transform:
-            rotate(45deg);
+          transform: rotate(45deg);
 
           font-size: 20px;
         }
-
-
-        /* POPUP */
 
         .leaflet-popup-content-wrapper {
           background: #101511;
@@ -434,7 +615,6 @@ export default function SahyadriMapClient({
 
         .popupIcon {
           font-size: 30px;
-
           margin-bottom: 5px;
         }
 
@@ -459,11 +639,19 @@ export default function SahyadriMapClient({
         }
 
         .popupLocation {
-          margin: 0 0 15px;
+          margin: 0 0 10px;
 
           color: #9da59f;
 
           font-size: 12px;
+        }
+
+        .gpxAvailable {
+          color: #e7a93b;
+
+          font-size: 10px;
+
+          font-weight: bold;
         }
 
         .popupButton {
@@ -483,13 +671,6 @@ export default function SahyadriMapClient({
 
           letter-spacing: 1px;
         }
-
-        .popupButton:hover {
-          background: #f0bd55;
-        }
-
-
-        /* BOTTOM */
 
         .mapBottom {
           max-width: 1250px;
@@ -540,9 +721,6 @@ export default function SahyadriMapClient({
           font-size: 11px;
         }
 
-
-        /* TABLET */
-
         @media (max-width: 800px) {
 
           .mapSection {
@@ -551,12 +729,7 @@ export default function SahyadriMapClient({
 
           .mapHeader {
             flex-direction: column;
-
             align-items: flex-start;
-          }
-
-          .fortCount {
-            min-width: 120px;
           }
 
           .mapWrapper {
@@ -569,14 +742,10 @@ export default function SahyadriMapClient({
 
           .mapBottom {
             flex-direction: column;
-
             align-items: flex-start;
           }
 
         }
-
-
-        /* MOBILE */
 
         @media (max-width: 600px) {
 
@@ -603,6 +772,11 @@ export default function SahyadriMapClient({
 
           .mapInfo small {
             display: none;
+          }
+
+          .gpxStatus {
+            right: 10px;
+            bottom: 10px;
           }
 
           .mapBottom p {
