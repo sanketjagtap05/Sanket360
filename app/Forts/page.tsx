@@ -115,9 +115,11 @@ export default async function FortsPage() {
 
           <div className="countBox">
             <span>ARCHIVE</span>
+
             <strong>
               {String(forts?.length || 0).padStart(2, "0")}
             </strong>
+
             <small>FORTS</small>
           </div>
 
@@ -259,6 +261,7 @@ export default async function FortsPage() {
         <div className="mapHeader">
 
           <div>
+
             <p className="sectionLabel">
               02 / THE SAHYADRI
             </p>
@@ -268,6 +271,7 @@ export default async function FortsPage() {
               <br />
               <span>Sahyadri.</span>
             </h2>
+
           </div>
 
           <p>
@@ -884,7 +888,6 @@ export default async function FortsPage() {
           margin-top: 20px;
         }
 
-        .badge,
         .badges span {
           padding: 6px 8px;
 

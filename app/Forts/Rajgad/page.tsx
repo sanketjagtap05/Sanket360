@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-import Weather from "@/components/Weather";
-import HistoricalHighlights from "@/components/HistoricalHighlights";
+
 
 type Fort = {
   id: number;
@@ -53,19 +52,19 @@ export default function RajgadPage() {
 
         <style>{`
           .loading {
-            min-height:100vh;
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            justify-content:center;
-            background:#070a08;
-            color:white;
-            font-family:Arial;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #070a08;
+            color: white;
+            font-family: Arial, Helvetica, sans-serif;
           }
 
           .loader {
-            font-size:60px;
-            margin-bottom:20px;
+            font-size: 60px;
+            margin-bottom: 20px;
           }
         `}</style>
       </main>
@@ -89,30 +88,30 @@ export default function RajgadPage() {
 
         <style>{`
           .loading {
-            min-height:100vh;
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            justify-content:center;
-            background:#070a08;
-            color:white;
-            font-family:Arial;
-            text-align:center;
-            padding:30px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #070a08;
+            color: white;
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+            padding: 30px;
           }
 
           .loader {
-            font-size:60px;
+            font-size: 60px;
           }
 
           .loading p {
-            color:#999;
+            color: #999;
           }
 
           .back {
-            margin-top:20px;
-            color:#e7a93b;
-            text-decoration:none;
+            margin-top: 20px;
+            color: #e7a93b;
+            text-decoration: none;
           }
         `}</style>
       </main>
@@ -150,14 +149,9 @@ export default function RajgadPage() {
             GALLERY
           </a>
 
-          <a href="#weather">
-            WEATHER
-          </a>
-
         </div>
 
       </nav>
-
 
       {/* HERO */}
 
@@ -171,7 +165,7 @@ export default function RajgadPage() {
                     90deg,
                     rgba(3,7,5,.92),
                     rgba(3,7,5,.55),
-                    rgba(3,7,5,.3)
+                    rgba(3,7,5,.30)
                   ),
                   url("${heroImage}")
                 `,
@@ -229,7 +223,6 @@ export default function RajgadPage() {
 
       </section>
 
-
       {/* QUICK INFO */}
 
       <section className="quick">
@@ -267,7 +260,6 @@ export default function RajgadPage() {
         </div>
 
       </section>
-
 
       {/* HISTORY */}
 
@@ -310,6 +302,7 @@ export default function RajgadPage() {
 
       </section>
 
+    
 
       {/* WHAT TO SEE */}
 
@@ -332,6 +325,7 @@ export default function RajgadPage() {
               .split("\n")
               .filter(Boolean)
               .map((item, index) => (
+
                 <div
                   className="thing"
                   key={index}
@@ -350,9 +344,11 @@ export default function RajgadPage() {
                   </b>
 
                 </div>
+
               ))
           ) : (
             <>
+
               <div className="thing">
                 <span>01</span>
                 <p>बालेकिल्ला</p>
@@ -370,13 +366,13 @@ export default function RajgadPage() {
                 <p>सह्याद्रीचे विहंगम दृश्य</p>
                 <b>→</b>
               </div>
+
             </>
           )}
 
         </div>
 
       </section>
-
 
       {/* GALLERY */}
 
@@ -436,7 +432,6 @@ export default function RajgadPage() {
 
           </div>
 
-
           {/* 360 */}
 
           <div className="media">
@@ -472,7 +467,6 @@ export default function RajgadPage() {
             </div>
 
           </div>
-
 
           {/* VIDEO */}
 
@@ -514,41 +508,6 @@ export default function RajgadPage() {
 
       </section>
 
-
-      {/* WEATHER */}
-
-      <section
-        id="weather"
-        className="weatherSection"
-      >
-
-        <div className="label">
-          04 / RAJGAD WEATHER
-        </div>
-
-        <h2>
-          Check the
-          <br />
-          <span>Weather.</span>
-        </h2>
-
-        <p className="weatherDescription">
-          राजगड ट्रेकला जाण्यापूर्वी सध्याचे हवामान
-          आणि परिस्थिती तपासा.
-        </p>
-
-        <div className="weatherCard">
-
-          <Weather
-            latitude={18.2315}
-            longitude={73.6825}
-          />
-
-        </div>
-
-      </section>
-
-
       {/* GPX */}
 
       <section className="gpxSection">
@@ -556,7 +515,7 @@ export default function RajgadPage() {
         <div>
 
           <div className="label">
-            05 / TREK DATA
+            04 / TREK DATA
           </div>
 
           <h2>
@@ -604,13 +563,12 @@ export default function RajgadPage() {
 
       </section>
 
-
-      {/* TIPS */}
+      {/* TREKKING */}
 
       <section className="section dark">
 
         <div className="label">
-          06 / TREKKING
+          05 / TREKKING
         </div>
 
         <h2>
@@ -657,7 +615,6 @@ export default function RajgadPage() {
 
       </section>
 
-
       {/* CTA */}
 
       <section className="cta">
@@ -683,7 +640,6 @@ export default function RajgadPage() {
 
       </section>
 
-
       {/* FOOTER */}
 
       <footer>
@@ -706,550 +662,473 @@ export default function RajgadPage() {
 
       </footer>
 
-
       <style>{`
 
         * {
-          box-sizing:border-box;
+          box-sizing: border-box;
         }
 
         html {
-          scroll-behavior:smooth;
+          scroll-behavior: smooth;
         }
 
         body {
-          margin:0;
+          margin: 0;
         }
 
         .page {
-          background:#070a08;
-          color:#f5f5f2;
-          font-family:Arial, Helvetica, sans-serif;
+          background: #070a08;
+          color: #f5f5f2;
+          font-family: Arial, Helvetica, sans-serif;
         }
 
         .navbar {
-          position:sticky;
-          top:0;
-          z-index:100;
+          position: sticky;
+          top: 0;
+          z-index: 100;
 
-          min-height:76px;
+          height: 76px;
 
-          padding:0 7%;
+          padding: 0 7%;
 
-          display:flex;
-          align-items:center;
-          justify-content:space-between;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
 
-          background:rgba(7,10,8,.94);
+          background: rgba(7,10,8,.94);
 
-          border-bottom:1px solid #252c27;
+          border-bottom: 1px solid #252c27;
 
-          backdrop-filter:blur(15px);
+          backdrop-filter: blur(15px);
         }
 
         .logo,
         .footerLogo {
-          color:white;
-          text-decoration:none;
+          color: white;
+          text-decoration: none;
 
-          font-size:25px;
-          font-weight:900;
+          font-size: 25px;
+          font-weight: 900;
 
-          letter-spacing:3px;
+          letter-spacing: 3px;
         }
 
         .logo span,
         .footerLogo span {
-          color:#e7a93b;
+          color: #e7a93b;
         }
 
         .nav {
-          display:flex;
-          gap:28px;
+          display: flex;
+          gap: 28px;
         }
 
         .nav a {
-          color:#aaa;
-          text-decoration:none;
+          color: #aaa;
+          text-decoration: none;
 
-          font-size:11px;
-          font-weight:800;
+          font-size: 11px;
+          font-weight: 800;
 
-          letter-spacing:2px;
+          letter-spacing: 2px;
 
-          transition:.2s;
+          transition: .2s;
         }
 
         .nav a:hover {
-          color:#e7a93b;
+          color: #e7a93b;
         }
 
         .hero {
+          min-height: calc(100vh - 76px);
 
-          min-height:calc(100vh - 76px);
+          padding: 100px 8%;
 
-          padding:100px 8%;
+          display: flex;
+          align-items: center;
 
-          display:flex;
-          align-items:center;
+          position: relative;
 
-          position:relative;
+          background-color: #111;
 
-          background-color:#111;
+          background-size: cover;
+          background-position: center;
 
-          background-size:cover;
-          background-position:center;
-
-          border-bottom:1px solid #252c27;
+          border-bottom: 1px solid #252c27;
         }
 
         .heroContent {
-          max-width:900px;
+          max-width: 900px;
         }
 
         .eyebrow,
         .label {
-          color:#e7a93b;
+          color: #e7a93b;
 
-          font-size:11px;
-          font-weight:900;
+          font-size: 11px;
+          font-weight: 900;
 
-          letter-spacing:4px;
+          letter-spacing: 4px;
         }
 
         .hero h1 {
+          margin: 20px 0 0;
 
-          margin:20px 0 0;
+          font-size: clamp(75px,12vw,155px);
 
-          font-size:clamp(75px,12vw,155px);
+          line-height: .82;
 
-          line-height:.82;
-
-          letter-spacing:-8px;
+          letter-spacing: -8px;
         }
 
         .hero h2 {
+          margin: 20px 0;
 
-          margin:20px 0;
+          font-size: 32px;
 
-          font-size:32px;
-
-          font-weight:400;
+          font-weight: 400;
         }
 
         .hero p {
+          max-width: 650px;
 
-          max-width:650px;
+          color: #c2c7c3;
 
-          color:#c2c7c3;
+          font-size: 18px;
 
-          font-size:18px;
-
-          line-height:1.8;
+          line-height: 1.8;
         }
 
         .buttons {
+          display: flex;
+          gap: 12px;
 
-          display:flex;
-          gap:12px;
+          margin-top: 35px;
 
-          margin-top:35px;
-
-          flex-wrap:wrap;
+          flex-wrap: wrap;
         }
 
         .primary,
         .secondary,
         .gpxButton,
         .ctaButton {
+          display: inline-block;
 
-          display:inline-block;
+          padding: 15px 22px;
 
-          padding:15px 22px;
+          text-decoration: none;
 
-          text-decoration:none;
+          font-size: 11px;
+          font-weight: 900;
 
-          font-size:11px;
+          letter-spacing: 2px;
 
-          font-weight:900;
-
-          letter-spacing:2px;
-
-          transition:.25s;
+          transition: .25s;
         }
 
         .primary {
-          background:#e7a93b;
-          color:#111;
+          background: #e7a93b;
+          color: #111;
         }
 
         .secondary {
-          color:white;
-          border:1px solid #777;
+          color: white;
+
+          border: 1px solid #777;
         }
 
         .primary:hover {
-          transform:translateY(-3px);
+          transform: translateY(-3px);
         }
 
         .secondary:hover {
-          border-color:#e7a93b;
-          color:#e7a93b;
+          border-color: #e7a93b;
+          color: #e7a93b;
         }
 
         .scroll {
+          position: absolute;
 
-          position:absolute;
+          right: 7%;
+          bottom: 35px;
 
-          right:7%;
-          bottom:35px;
+          color: #777;
 
-          color:#777;
+          font-size: 9px;
 
-          font-size:9px;
-
-          letter-spacing:3px;
+          letter-spacing: 3px;
         }
 
         .quick {
+          display: grid;
 
-          display:grid;
+          grid-template-columns: repeat(4,1fr);
 
-          grid-template-columns:repeat(4,1fr);
+          background: #101511;
 
-          background:#101511;
-
-          border-bottom:1px solid #29312c;
+          border-bottom: 1px solid #29312c;
         }
 
         .quick > div {
+          padding: 35px;
 
-          padding:35px;
-
-          border-right:1px solid #29312c;
+          border-right: 1px solid #29312c;
         }
 
         .quick > div:last-child {
-          border-right:none;
+          border-right: none;
         }
 
         .quick span {
+          display: block;
 
-          display:block;
+          color: #e7a93b;
 
-          color:#e7a93b;
+          font-size: 10px;
 
-          font-size:10px;
-
-          margin-bottom:20px;
+          margin-bottom: 20px;
         }
 
         .quick strong {
+          display: block;
 
-          display:block;
+          font-size: 15px;
 
-          font-size:15px;
-
-          letter-spacing:2px;
+          letter-spacing: 2px;
         }
 
         .quick p {
+          color: #777f79;
 
-          color:#777f79;
+          font-size: 13px;
 
-          font-size:13px;
-
-          line-height:1.5;
+          line-height: 1.5;
         }
 
-        .section,
-        .weatherSection {
-
-          padding:120px 8%;
+        .section {
+          padding: 120px 8%;
         }
 
         .section h2,
-        .weatherSection h2,
         .gpxSection h2,
         .cta h2 {
+          margin: 20px 0 50px;
 
-          margin:20px 0 50px;
+          font-size: clamp(55px,8vw,105px);
 
-          font-size:clamp(55px,8vw,105px);
+          line-height: .88;
 
-          line-height:.88;
-
-          letter-spacing:-5px;
+          letter-spacing: -5px;
         }
 
         .section h2 span,
-        .weatherSection h2 span,
         .gpxSection h2 span {
-          color:#e7a93b;
+          color: #e7a93b;
         }
 
         .historyLayout {
+          max-width: 1000px;
 
-          max-width:1000px;
+          display: grid;
 
-          display:grid;
+          grid-template-columns: 180px 1fr;
 
-          grid-template-columns:180px 1fr;
-
-          gap:50px;
+          gap: 50px;
         }
 
         .bigNumber {
+          font-size: 130px;
 
-          font-size:130px;
+          color: #1c241f;
 
-          color:#1c241f;
+          font-weight: 900;
 
-          font-weight:900;
-
-          line-height:1;
+          line-height: 1;
         }
 
         .historyText {
+          color: #b8beb9;
 
-          color:#b8beb9;
+          font-size: 19px;
 
-          font-size:19px;
-
-          line-height:1.9;
+          line-height: 1.9;
         }
 
         .quote {
+          margin-top: 35px;
 
-          margin-top:35px;
+          padding: 25px;
 
-          padding:25px;
+          border-left: 2px solid #e7a93b;
 
-          border-left:2px solid #e7a93b;
+          color: #e7a93b;
 
-          color:#e7a93b;
+          font-size: 16px;
 
-          font-size:16px;
-
-          line-height:1.7;
+          line-height: 1.7;
         }
 
         .dark {
+          background: #0d120f;
 
-          background:#0d120f;
-
-          border-top:1px solid #1f2822;
-          border-bottom:1px solid #1f2822;
+          border-top: 1px solid #1f2822;
+          border-bottom: 1px solid #1f2822;
         }
 
         .things {
-          max-width:1100px;
+          max-width: 1100px;
         }
 
         .thing {
+          display: grid;
 
-          display:grid;
+          grid-template-columns: 80px 1fr 30px;
 
-          grid-template-columns:80px 1fr 30px;
+          align-items: center;
 
-          align-items:center;
+          padding: 28px 0;
 
-          padding:28px 0;
-
-          border-bottom:1px solid #29312c;
+          border-bottom: 1px solid #29312c;
         }
 
         .thing span {
-          color:#e7a93b;
-          font-size:11px;
+          color: #e7a93b;
+          font-size: 11px;
         }
 
         .thing p {
-          margin:0;
-          font-size:22px;
+          margin: 0;
+
+          font-size: 22px;
         }
 
         .thing b {
-          color:#e7a93b;
-          font-size:22px;
+          color: #e7a93b;
+          font-size: 22px;
         }
 
         .mediaGrid {
+          display: grid;
 
-          display:grid;
+          grid-template-columns: repeat(3,1fr);
 
-          grid-template-columns:repeat(3,1fr);
-
-          gap:20px;
+          gap: 20px;
         }
 
         .media {
+          min-height: 380px;
 
-          min-height:380px;
+          position: relative;
 
-          position:relative;
+          overflow: hidden;
 
-          overflow:hidden;
+          border: 1px solid #303832;
 
-          border:1px solid #303832;
-
-          background:#111712;
+          background: #111712;
         }
 
         .media img {
+          width: 100%;
+          height: 100%;
 
-          width:100%;
-          height:100%;
+          min-height: 380px;
 
-          min-height:380px;
+          object-fit: cover;
 
-          object-fit:cover;
-
-          opacity:.65;
+          opacity: .65;
         }
 
         .mediaIcon {
+          height: 250px;
 
-          height:250px;
+          display: flex;
 
-          display:flex;
+          align-items: center;
+          justify-content: center;
 
-          align-items:center;
+          font-size: 75px;
 
-          justify-content:center;
-
-          font-size:75px;
-
-          background:#18201b;
+          background: #18201b;
         }
 
         .mediaInfo {
+          position: absolute;
 
-          position:absolute;
-
-          left:25px;
-          right:25px;
-          bottom:25px;
+          left: 25px;
+          right: 25px;
+          bottom: 25px;
         }
 
         .mediaInfo small {
+          color: #e7a93b;
 
-          color:#e7a93b;
+          font-size: 9px;
 
-          font-size:9px;
-
-          letter-spacing:3px;
+          letter-spacing: 3px;
         }
 
         .mediaInfo h3 {
+          font-size: 25px;
 
-          font-size:25px;
-
-          margin:8px 0 15px;
+          margin: 8px 0 15px;
         }
 
         .mediaInfo a {
+          color: #e7a93b;
 
-          color:#e7a93b;
+          text-decoration: none;
 
-          text-decoration:none;
+          font-size: 10px;
 
-          font-size:10px;
+          font-weight: 900;
 
-          font-weight:900;
-
-          letter-spacing:2px;
+          letter-spacing: 2px;
         }
 
         .mediaInfo p {
-          color:#888;
+          color: #888;
         }
-
-
-        /* WEATHER */
-
-        .weatherSection {
-          background:#101611;
-
-          border-top:1px solid #29332d;
-          border-bottom:1px solid #29332d;
-        }
-
-        .weatherDescription {
-
-          max-width:650px;
-
-          margin:-20px 0 35px;
-
-          color:#aeb6b0;
-
-          font-size:16px;
-
-          line-height:1.8;
-        }
-
-        .weatherCard {
-
-          max-width:1100px;
-
-          margin:0 auto;
-
-          padding:0;
-
-          border:1px solid #303832;
-
-          background:#0b100d;
-
-          overflow:hidden;
-        }
-
-
-        /* GPX */
 
         .gpxSection {
+          padding: 120px 8%;
 
-          padding:120px 8%;
+          display: grid;
 
-          display:grid;
+          grid-template-columns: 1fr 1fr;
 
-          grid-template-columns:1fr 1fr;
+          gap: 80px;
 
-          gap:80px;
-
-          background:#172219;
+          background: #172219;
         }
 
         .gpxSection p {
+          max-width: 600px;
 
-          max-width:600px;
+          color: #aeb6b0;
 
-          color:#aeb6b0;
-
-          line-height:1.8;
+          line-height: 1.8;
         }
 
         .gpxButton {
+          margin-top: 20px;
 
-          margin-top:20px;
+          background: #e7a93b;
 
-          background:#e7a93b;
-
-          color:#111;
+          color: #111;
         }
 
         .muted {
-          color:#777 !important;
+          color: #777 !important;
         }
 
         .mapBox {
+          min-height: 400px;
 
-          min-height:400px;
+          position: relative;
 
-          position:relative;
+          overflow: hidden;
 
-          overflow:hidden;
-
-          border:1px solid #39483d;
+          border: 1px solid #39483d;
 
           background:
             radial-gradient(
@@ -1261,96 +1140,90 @@ export default function RajgadPage() {
         }
 
         .mapLines {
+          position: absolute;
 
-          position:absolute;
-          inset:0;
+          inset: 0;
 
-          opacity:.25;
+          opacity: .25;
 
           background-image:
-            linear-gradient(#59655c 1px,transparent 1px),
-            linear-gradient(90deg,#59655c 1px,transparent 1px);
+            linear-gradient(
+              #59655c 1px,
+              transparent 1px
+            ),
+            linear-gradient(
+              90deg,
+              #59655c 1px,
+              transparent 1px
+            );
 
-          background-size:50px 50px;
+          background-size: 50px 50px;
         }
 
         .mapPin {
+          position: absolute;
 
-          position:absolute;
+          left: 50%;
+          top: 48%;
 
-          left:50%;
-          top:48%;
+          transform: translate(-50%,-50%);
 
-          transform:translate(-50%,-50%);
-
-          font-size:55px;
+          font-size: 55px;
         }
 
         .mapBox > span {
+          position: absolute;
 
-          position:absolute;
+          bottom: 25px;
+          left: 25px;
 
-          bottom:25px;
-          left:25px;
+          color: #e7a93b;
 
-          color:#e7a93b;
+          font-size: 10px;
 
-          font-size:10px;
+          font-weight: 900;
 
-          font-weight:900;
-
-          letter-spacing:4px;
+          letter-spacing: 4px;
         }
 
-
-        /* TIPS */
-
         .tips {
+          display: grid;
 
-          display:grid;
+          grid-template-columns: repeat(4,1fr);
 
-          grid-template-columns:repeat(4,1fr);
-
-          gap:20px;
+          gap: 20px;
         }
 
         .tips > div {
+          padding: 30px;
 
-          padding:30px;
+          border: 1px solid #29342e;
 
-          border:1px solid #29342e;
-
-          background:#131a16;
+          background: #131a16;
         }
 
         .tips b {
+          color: #e7a93b;
 
-          color:#e7a93b;
-
-          font-size:11px;
+          font-size: 11px;
         }
 
         .tips h3 {
-          margin-top:25px;
+          margin-top: 25px;
         }
 
         .tips p {
+          color: #888f8a;
 
-          color:#888f8a;
+          line-height: 1.6;
 
-          line-height:1.6;
-
-          font-size:14px;
+          font-size: 14px;
         }
 
-
-        /* CTA */
-
         .cta {
+          padding: 150px 8%;
 
-          padding:150px 8%;
-
-          text-align:center;
+          text-align: center;
 
           background:
             radial-gradient(
@@ -1362,171 +1235,146 @@ export default function RajgadPage() {
         }
 
         .cta h2 {
-          margin-bottom:45px;
+          margin-bottom: 45px;
         }
 
         .ctaButton {
+          border: 1px solid #e7a93b;
 
-          border:1px solid #e7a93b;
-
-          color:#e7a93b;
+          color: #e7a93b;
         }
 
-
-        /* FOOTER */
-
         footer {
+          padding: 70px 7%;
 
-          padding:70px 7%;
+          text-align: center;
 
-          text-align:center;
+          background: #060806;
 
-          background:#060806;
-
-          border-top:1px solid #29312c;
+          border-top: 1px solid #29312c;
         }
 
         footer p {
+          color: #777;
 
-          color:#777;
+          font-size: 10px;
 
-          font-size:10px;
+          letter-spacing: 3px;
 
-          letter-spacing:3px;
-
-          margin:18px 0 25px;
+          margin: 18px 0 25px;
         }
 
         footer a {
+          color: #e7a93b;
 
-          color:#e7a93b;
+          text-decoration: none;
 
-          text-decoration:none;
-
-          font-size:11px;
+          font-size: 11px;
         }
 
         footer small {
+          display: block;
 
-          display:block;
+          margin-top: 30px;
 
-          margin-top:30px;
-
-          color:#444;
+          color: #444;
         }
-
-
-        /* TABLET */
 
         @media(max-width:900px) {
 
           .quick {
-            grid-template-columns:repeat(2,1fr);
+            grid-template-columns: repeat(2,1fr);
           }
 
           .mediaGrid {
-            grid-template-columns:1fr;
+            grid-template-columns: 1fr;
           }
 
           .tips {
-            grid-template-columns:repeat(2,1fr);
+            grid-template-columns: repeat(2,1fr);
           }
 
           .gpxSection {
-            grid-template-columns:1fr;
+            grid-template-columns: 1fr;
           }
 
         }
 
-
-        /* MOBILE */
-
         @media(max-width:600px) {
 
           .navbar {
-            height:auto;
+            height: auto;
 
-            padding:18px 6%;
+            padding: 18px 6%;
 
-            flex-direction:column;
+            flex-direction: column;
 
-            gap:15px;
+            gap: 15px;
           }
 
           .nav {
-            gap:15px;
+            gap: 15px;
 
-            flex-wrap:wrap;
+            flex-wrap: wrap;
 
-            justify-content:center;
+            justify-content: center;
           }
 
           .hero {
-            min-height:650px;
+            min-height: 650px;
 
-            padding:80px 6%;
+            padding: 80px 6%;
           }
 
           .hero h1 {
+            font-size: 70px;
 
-            font-size:70px;
-
-            letter-spacing:-4px;
+            letter-spacing: -4px;
           }
 
           .quick {
-            grid-template-columns:1fr;
+            grid-template-columns: 1fr;
           }
 
           .quick > div {
+            border-right: none;
 
-            border-right:none;
-
-            border-bottom:1px solid #29312c;
+            border-bottom: 1px solid #29312c;
           }
 
           .section,
-          .weatherSection,
           .gpxSection {
-
-            padding:80px 6%;
+            padding: 80px 6%;
           }
 
           .section h2,
-          .weatherSection h2,
           .gpxSection h2,
           .cta h2 {
+            font-size: 60px;
 
-            font-size:60px;
-
-            letter-spacing:-3px;
+            letter-spacing: -3px;
           }
 
           .historyLayout {
+            grid-template-columns: 1fr;
 
-            grid-template-columns:1fr;
-
-            gap:10px;
+            gap: 10px;
           }
 
           .bigNumber {
-            font-size:70px;
+            font-size: 70px;
           }
 
           .tips {
-            grid-template-columns:1fr;
+            grid-template-columns: 1fr;
           }
 
           .cta {
-            padding:100px 6%;
+            padding: 100px 6%;
           }
 
           .scroll {
-            display:none;
-          }
-
-          .weatherCard {
-            width:100%;
+            display: none;
           }
 
         }
