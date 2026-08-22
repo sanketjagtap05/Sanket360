@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-
+import FortGallery from "@/app/components/FortGallery";
 
 type Fort = {
   id: number;
@@ -163,9 +163,9 @@ export default function RajgadPage() {
                 backgroundImage: `
                   linear-gradient(
                     90deg,
-                    rgba(3,7,5,.92),
-                    rgba(3,7,5,.55),
-                    rgba(3,7,5,.30)
+                    rgba(3,7,5,.94),
+                    rgba(3,7,5,.58),
+                    rgba(3,7,5,.25)
                   ),
                   url("${heroImage}")
                 `,
@@ -302,8 +302,6 @@ export default function RajgadPage() {
 
       </section>
 
-    
-
       {/* WHAT TO SEE */}
 
       <section className="dark section">
@@ -325,7 +323,6 @@ export default function RajgadPage() {
               .split("\n")
               .filter(Boolean)
               .map((item, index) => (
-
                 <div
                   className="thing"
                   key={index}
@@ -344,11 +341,9 @@ export default function RajgadPage() {
                   </b>
 
                 </div>
-
               ))
           ) : (
             <>
-
               <div className="thing">
                 <span>01</span>
                 <p>बालेकिल्ला</p>
@@ -366,7 +361,6 @@ export default function RajgadPage() {
                 <p>सह्याद्रीचे विहंगम दृश्य</p>
                 <b>→</b>
               </div>
-
             </>
           )}
 
@@ -374,15 +368,15 @@ export default function RajgadPage() {
 
       </section>
 
-      {/* GALLERY */}
+      {/* PREMIUM GALLERY */}
 
       <section
         id="gallery"
-        className="section"
+        className="section gallerySection"
       >
 
         <div className="label">
-          03 / MEDIA
+          03 / MEDIA EXPERIENCE
         </div>
 
         <h2>
@@ -391,120 +385,18 @@ export default function RajgadPage() {
           <span>Rajgad.</span>
         </h2>
 
-        <div className="mediaGrid">
+        <p className="galleryIntro">
+          Rajgad चे photos, 360° experience आणि
+          video एका premium digital gallery मध्ये
+          explore करा.
+        </p>
 
-          {/* PHOTO */}
-
-          <div className="media">
-
-            {fort.photos_url ? (
-              <img
-                src={fort.photos_url}
-                alt="Rajgad"
-              />
-            ) : (
-              <div className="mediaIcon">
-                📷
-              </div>
-            )}
-
-            <div className="mediaInfo">
-
-              <small>
-                PHOTOGRAPHY
-              </small>
-
-              <h3>
-                Rajgad Photos
-              </h3>
-
-              {fort.photos_url && (
-                <a
-                  href={fort.photos_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  VIEW PHOTOS →
-                </a>
-              )}
-
-            </div>
-
-          </div>
-
-          {/* 360 */}
-
-          <div className="media">
-
-            <div className="mediaIcon">
-              🌐
-            </div>
-
-            <div className="mediaInfo">
-
-              <small>
-                IMMERSIVE
-              </small>
-
-              <h3>
-                360° Experience
-              </h3>
-
-              {fort.photos_360_url ? (
-                <a
-                  href={fort.photos_360_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  LAUNCH 360° →
-                </a>
-              ) : (
-                <p>
-                  Coming soon
-                </p>
-              )}
-
-            </div>
-
-          </div>
-
-          {/* VIDEO */}
-
-          <div className="media">
-
-            <div className="mediaIcon">
-              ▶
-            </div>
-
-            <div className="mediaInfo">
-
-              <small>
-                VIDEO
-              </small>
-
-              <h3>
-                Rajgad Videos
-              </h3>
-
-              {fort.video_url ? (
-                <a
-                  href={fort.video_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  WATCH VIDEO →
-                </a>
-              ) : (
-                <p>
-                  Coming soon
-                </p>
-              )}
-
-            </div>
-
-          </div>
-
-        </div>
+        <FortGallery
+          photosUrl={fort.photos_url}
+          photos360Url={fort.photos_360_url}
+          videoUrl={fort.video_url}
+          fortName={fort.name}
+        />
 
       </section>
 
@@ -563,7 +455,7 @@ export default function RajgadPage() {
 
       </section>
 
-      {/* TREKKING */}
+      {/* TREKKING TIPS */}
 
       <section className="section dark">
 
@@ -581,7 +473,11 @@ export default function RajgadPage() {
 
           <div>
             <b>01</b>
-            <h3>🥾 Footwear</h3>
+
+            <h3>
+              🥾 Footwear
+            </h3>
+
             <p>
               योग्य trekking shoes वापरा.
             </p>
@@ -589,7 +485,11 @@ export default function RajgadPage() {
 
           <div>
             <b>02</b>
-            <h3>💧 Water</h3>
+
+            <h3>
+              💧 Water
+            </h3>
+
             <p>
               पुरेसे पाणी सोबत ठेवा.
             </p>
@@ -597,7 +497,11 @@ export default function RajgadPage() {
 
           <div>
             <b>03</b>
-            <h3>🌦️ Weather</h3>
+
+            <h3>
+              🌦️ Weather
+            </h3>
+
             <p>
               ट्रेकपूर्वी हवामान तपासा.
             </p>
@@ -605,7 +509,11 @@ export default function RajgadPage() {
 
           <div>
             <b>04</b>
-            <h3>♻️ Nature</h3>
+
+            <h3>
+              ♻️ Nature
+            </h3>
+
             <p>
               कचरा न टाकता सह्याद्री स्वच्छ ठेवा.
             </p>
@@ -682,6 +590,8 @@ export default function RajgadPage() {
           font-family: Arial, Helvetica, sans-serif;
         }
 
+        /* NAVBAR */
+
         .navbar {
           position: sticky;
           top: 0;
@@ -705,9 +615,11 @@ export default function RajgadPage() {
         .logo,
         .footerLogo {
           color: white;
+
           text-decoration: none;
 
           font-size: 25px;
+
           font-weight: 900;
 
           letter-spacing: 3px;
@@ -720,14 +632,17 @@ export default function RajgadPage() {
 
         .nav {
           display: flex;
+
           gap: 28px;
         }
 
         .nav a {
           color: #aaa;
+
           text-decoration: none;
 
           font-size: 11px;
+
           font-weight: 800;
 
           letter-spacing: 2px;
@@ -739,12 +654,15 @@ export default function RajgadPage() {
           color: #e7a93b;
         }
 
+        /* HERO */
+
         .hero {
           min-height: calc(100vh - 76px);
 
           padding: 100px 8%;
 
           display: flex;
+
           align-items: center;
 
           position: relative;
@@ -752,6 +670,7 @@ export default function RajgadPage() {
           background-color: #111;
 
           background-size: cover;
+
           background-position: center;
 
           border-bottom: 1px solid #252c27;
@@ -766,6 +685,7 @@ export default function RajgadPage() {
           color: #e7a93b;
 
           font-size: 11px;
+
           font-weight: 900;
 
           letter-spacing: 4px;
@@ -801,6 +721,7 @@ export default function RajgadPage() {
 
         .buttons {
           display: flex;
+
           gap: 12px;
 
           margin-top: 35px;
@@ -819,6 +740,7 @@ export default function RajgadPage() {
           text-decoration: none;
 
           font-size: 11px;
+
           font-weight: 900;
 
           letter-spacing: 2px;
@@ -828,6 +750,7 @@ export default function RajgadPage() {
 
         .primary {
           background: #e7a93b;
+
           color: #111;
         }
 
@@ -843,6 +766,7 @@ export default function RajgadPage() {
 
         .secondary:hover {
           border-color: #e7a93b;
+
           color: #e7a93b;
         }
 
@@ -850,6 +774,7 @@ export default function RajgadPage() {
           position: absolute;
 
           right: 7%;
+
           bottom: 35px;
 
           color: #777;
@@ -858,6 +783,8 @@ export default function RajgadPage() {
 
           letter-spacing: 3px;
         }
+
+        /* QUICK INFO */
 
         .quick {
           display: grid;
@@ -905,6 +832,8 @@ export default function RajgadPage() {
           line-height: 1.5;
         }
 
+        /* SECTION */
+
         .section {
           padding: 120px 8%;
         }
@@ -925,6 +854,8 @@ export default function RajgadPage() {
         .gpxSection h2 span {
           color: #e7a93b;
         }
+
+        /* HISTORY */
 
         .historyLayout {
           max-width: 1000px;
@@ -968,12 +899,17 @@ export default function RajgadPage() {
           line-height: 1.7;
         }
 
+        /* DARK */
+
         .dark {
           background: #0d120f;
 
           border-top: 1px solid #1f2822;
+
           border-bottom: 1px solid #1f2822;
         }
+
+        /* WHAT TO SEE */
 
         .things {
           max-width: 1100px;
@@ -993,6 +929,7 @@ export default function RajgadPage() {
 
         .thing span {
           color: #e7a93b;
+
           font-size: 11px;
         }
 
@@ -1004,90 +941,31 @@ export default function RajgadPage() {
 
         .thing b {
           color: #e7a93b;
+
           font-size: 22px;
         }
 
-        .mediaGrid {
-          display: grid;
+        /* GALLERY */
 
-          grid-template-columns: repeat(3,1fr);
-
-          gap: 20px;
+        .gallerySection {
+          background: #070a08;
         }
 
-        .media {
-          min-height: 380px;
+        .galleryIntro {
+          max-width: 650px;
 
-          position: relative;
+          margin-top: -20px;
 
-          overflow: hidden;
+          margin-bottom: 45px;
 
-          border: 1px solid #303832;
+          color: #8d968f;
 
-          background: #111712;
+          line-height: 1.8;
+
+          font-size: 16px;
         }
 
-        .media img {
-          width: 100%;
-          height: 100%;
-
-          min-height: 380px;
-
-          object-fit: cover;
-
-          opacity: .65;
-        }
-
-        .mediaIcon {
-          height: 250px;
-
-          display: flex;
-
-          align-items: center;
-          justify-content: center;
-
-          font-size: 75px;
-
-          background: #18201b;
-        }
-
-        .mediaInfo {
-          position: absolute;
-
-          left: 25px;
-          right: 25px;
-          bottom: 25px;
-        }
-
-        .mediaInfo small {
-          color: #e7a93b;
-
-          font-size: 9px;
-
-          letter-spacing: 3px;
-        }
-
-        .mediaInfo h3 {
-          font-size: 25px;
-
-          margin: 8px 0 15px;
-        }
-
-        .mediaInfo a {
-          color: #e7a93b;
-
-          text-decoration: none;
-
-          font-size: 10px;
-
-          font-weight: 900;
-
-          letter-spacing: 2px;
-        }
-
-        .mediaInfo p {
-          color: #888;
-        }
+        /* GPX */
 
         .gpxSection {
           padding: 120px 8%;
@@ -1147,15 +1025,8 @@ export default function RajgadPage() {
           opacity: .25;
 
           background-image:
-            linear-gradient(
-              #59655c 1px,
-              transparent 1px
-            ),
-            linear-gradient(
-              90deg,
-              #59655c 1px,
-              transparent 1px
-            );
+            linear-gradient(#59655c 1px,transparent 1px),
+            linear-gradient(90deg,#59655c 1px,transparent 1px);
 
           background-size: 50px 50px;
         }
@@ -1164,6 +1035,7 @@ export default function RajgadPage() {
           position: absolute;
 
           left: 50%;
+
           top: 48%;
 
           transform: translate(-50%,-50%);
@@ -1175,6 +1047,7 @@ export default function RajgadPage() {
           position: absolute;
 
           bottom: 25px;
+
           left: 25px;
 
           color: #e7a93b;
@@ -1185,6 +1058,8 @@ export default function RajgadPage() {
 
           letter-spacing: 4px;
         }
+
+        /* TIPS */
 
         .tips {
           display: grid;
@@ -1220,6 +1095,8 @@ export default function RajgadPage() {
           font-size: 14px;
         }
 
+        /* CTA */
+
         .cta {
           padding: 150px 8%;
 
@@ -1243,6 +1120,8 @@ export default function RajgadPage() {
 
           color: #e7a93b;
         }
+
+        /* FOOTER */
 
         footer {
           padding: 70px 7%;
@@ -1280,14 +1159,12 @@ export default function RajgadPage() {
           color: #444;
         }
 
-        @media(max-width:900px) {
+        /* RESPONSIVE */
+
+        @media (max-width: 900px) {
 
           .quick {
             grid-template-columns: repeat(2,1fr);
-          }
-
-          .mediaGrid {
-            grid-template-columns: 1fr;
           }
 
           .tips {
@@ -1300,7 +1177,7 @@ export default function RajgadPage() {
 
         }
 
-        @media(max-width:600px) {
+        @media (max-width: 600px) {
 
           .navbar {
             height: auto;
