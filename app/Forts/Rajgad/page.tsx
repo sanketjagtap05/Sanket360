@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import FortGallery from "@/app/components/FortGallery";
+import HistoryTimeline from "@/app/components/HistoryTimeline";
 
 type Fort = {
   id: number;
@@ -278,6 +279,8 @@ export default function RajgadPage() {
           <span>इतिहास.</span>
         </h2>
 
+        {/* HISTORY TEXT */}
+
         <div className="historyLayout">
 
           <div className="bigNumber">
@@ -299,6 +302,37 @@ export default function RajgadPage() {
           </div>
 
         </div>
+
+        {/* HISTORY TIMELINE */}
+
+        <HistoryTimeline
+          items={[
+            {
+              year: "1647",
+              title: "राजगड स्वराज्यात",
+              description:
+                "छत्रपती शिवाजी महाराजांनी राजगड स्वराज्याच्या महत्त्वाच्या केंद्रांपैकी एक म्हणून विकसित केला.",
+            },
+            {
+              year: "1648",
+              title: "राजधानीचा काळ",
+              description:
+                "राजगड स्वराज्याच्या राजधानीच्या स्वरूपात विकसित झाला.",
+            },
+            {
+              year: "1670",
+              title: "स्वराज्याचा विस्तार",
+              description:
+                "स्वराज्याच्या विस्ताराच्या काळात राजगडाचे सामरिक महत्त्व कायम राहिले.",
+            },
+            {
+              year: "आज",
+              title: "ऐतिहासिक वारसा",
+              description:
+                "आज राजगड महाराष्ट्रातील प्रसिद्ध ऐतिहासिक किल्ला आणि trekking destination आहे.",
+            },
+          ]}
+        />
 
       </section>
 
@@ -570,6 +604,8 @@ export default function RajgadPage() {
 
       </footer>
 
+      {/* PAGE CSS */}
+
       <style>{`
 
         * {
@@ -632,7 +668,6 @@ export default function RajgadPage() {
 
         .nav {
           display: flex;
-
           gap: 28px;
         }
 
@@ -865,6 +900,8 @@ export default function RajgadPage() {
           grid-template-columns: 180px 1fr;
 
           gap: 50px;
+
+          margin-bottom: 20px;
         }
 
         .bigNumber {
